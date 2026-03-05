@@ -92,30 +92,18 @@ export default function ReservationPage() {
 
   const steps = [...t.page.steps];
 
-  const Logo = () => (
-    <a href={PROMOTIONAL_URL} className="flex flex-col items-start leading-tight">
-      <span className="text-2xl font-bold tracking-widest uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)" }}>
-        Saros
-      </span>
-      <span className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
-        Vadi
-      </span>
-    </a>
-  );
-
-  const HeaderControls = () => (
-    <div className="flex items-center gap-3">
-      <LanguageToggle />
-      <ThemeToggle />
-    </div>
-  );
-
   if (confirmed) {
     return (
       <div className="min-h-screen flex flex-col" style={{ background: "var(--dark)" }}>
         <header className="px-6 lg:px-12 h-20 flex items-center justify-between border-b" style={{ borderColor: "var(--border-color)" }}>
-          <Logo />
-          <HeaderControls />
+          <a href={PROMOTIONAL_URL} className="flex flex-col items-start leading-tight">
+            <span className="text-2xl font-bold tracking-widest uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)" }}>Saros</span>
+            <span className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>Vadi</span>
+          </a>
+          <div className="flex items-center gap-3">
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
         </header>
         <main className="flex-1 flex items-center justify-center">
           <ConfirmationSuccess firstName={guestInfo.firstName} email={guestInfo.email} promotionalUrl={PROMOTIONAL_URL} />
@@ -127,9 +115,13 @@ export default function ReservationPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "var(--dark)" }}>
       <header className="px-6 lg:px-12 h-20 flex items-center justify-between border-b" style={{ borderColor: "var(--border-color)" }}>
-        <Logo />
+        <a href={PROMOTIONAL_URL} className="flex flex-col items-start leading-tight">
+          <span className="text-2xl font-bold tracking-widest uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)" }}>Saros</span>
+          <span className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>Vadi</span>
+        </a>
         <div className="flex items-center gap-4">
-          <HeaderControls />
+          <LanguageToggle />
+          <ThemeToggle />
           <a
             href={PROMOTIONAL_URL}
             className="hidden sm:flex items-center gap-2 text-sm opacity-50 hover:opacity-100 transition-opacity duration-300"
@@ -195,9 +187,17 @@ export default function ReservationPage() {
           <button
             type="button"
             onClick={handleBack}
-            disabled={currentStep === 1}
-            className="flex items-center gap-2 text-sm tracking-wide px-6 py-3 border transition-all duration-300 disabled:opacity-20 hover:enabled:bg-black/5 disabled:cursor-not-allowed"
-            style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
+            className="flex items-center gap-2 text-sm tracking-wide px-6 py-3 border transition-all duration-300 hover:bg-black/5"
+            style={{
+              borderColor: "var(--border-color)",
+              color: "var(--cream)",
+              fontFamily: "var(--font-raleway)",
+              opacity: currentStep === 1 ? 0.2 : 1,
+              pointerEvents: currentStep === 1 ? "none" : "auto",
+              cursor: currentStep === 1 ? "default" : "pointer",
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "transparent",
+            }}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
@@ -208,13 +208,17 @@ export default function ReservationPage() {
           {currentStep < 4 ? (
             <button
               type="button"
-              onClick={handleNext}
-              disabled={!canProceed}
-              className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase px-10 py-3.5 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:opacity-90"
+              onClick={canProceed ? handleNext : undefined}
+              className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase px-10 py-3.5 transition-opacity duration-300 hover:opacity-90"
               style={{
                 background: "var(--gold)",
                 color: "#fff",
                 fontFamily: "var(--font-raleway)",
+                opacity: canProceed ? 1 : 0.35,
+                pointerEvents: canProceed ? "auto" : "none",
+                cursor: canProceed ? "pointer" : "default",
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "transparent",
               }}
             >
               {t.nav.continue}
@@ -226,8 +230,15 @@ export default function ReservationPage() {
             <button
               type="button"
               onClick={() => setConfirmed(true)}
-              className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase px-10 py-3.5 transition-all duration-300 hover:opacity-90"
-              style={{ background: "var(--gold)", color: "#fff", fontFamily: "var(--font-raleway)" }}
+              className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase px-10 py-3.5 transition-opacity duration-300 hover:opacity-90"
+              style={{
+                background: "var(--gold)",
+                color: "#fff",
+                fontFamily: "var(--font-raleway)",
+                cursor: "pointer",
+                touchAction: "manipulation",
+                WebkitTapHighlightColor: "transparent",
+              }}
             >
               {t.nav.confirmReservation}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
