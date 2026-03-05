@@ -1,34 +1,25 @@
 "use client";
 
 import { useState } from "react";
+import { DayPicker, DateRange } from "react-day-picker";
 import { useLanguage } from "./LanguageProvider";
 
-// Auto-format digits into dd.mm.yyyy as the user types
-function formatDateInput(raw: string): string {
-  const digits = raw.replace(/\D/g, "").slice(0, 8);
-  if (digits.length <= 2) return digits;
-  if (digits.length <= 4) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
-  return `${digits.slice(0, 2)}.${digits.slice(2, 4)}.${digits.slice(4)}`;
-}
-
-// Convert dd.mm.yyyy → YYYY-MM-DD for internal use, returns "" if incomplete/invalid
-function toISO(display: string): string {
-  const parts = display.split(".");
-  if (parts.length !== 3) return "";
-  const [d, m, y] = parts;
-  if (d.length !== 2 || m.length !== 2 || y.length !== 4) return "";
-  const day = parseInt(d, 10);
-  const month = parseInt(m, 10);
-  const year = parseInt(y, 10);
-  if (day < 1 || day > 31 || month < 1 || month > 12 || year < 2024) return "";
-  return `${y}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-// Convert YYYY-MM-DD → dd.mm.yyyy for display
-function toDisplay(iso: string): string {
-  if (!iso) return "";
-  const [y, m, d] = iso.split("-");
+// Format a JS Date to dd.mm.yyyy
+function toDisplay(date: Date | undefined): string {
+  if (!date) return "";
+  const d = String(date.getDate()).padStart(2, "0");
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const y = date.getFullYear();
   return `${d}.${m}.${y}`;
+}
+
+// Format a JS Date to YYYY-MM-DD (ISO) for internal state
+function toISO(date: Date | undefined): string {
+  if (!date) return "";
+  const d = String(date.getDate()).padStart(2, "0");
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const y = date.getFullYear();
+  return `${y}-${m}-${d}`;
 }
 
 interface DateRangePickerProps {
@@ -41,44 +32,31 @@ interface DateRangePickerProps {
 
 export default function DateRangePicker({ checkIn, checkOut, adults, children, onChange }: DateRangePickerProps) {
   const { t, language } = useLanguage();
-
-  // Local display state (dd.mm.yyyy strings) — decoupled from ISO state
-  const [checkInDisplay, setCheckInDisplay] = useState(() => toDisplay(checkIn));
-  const [checkOutDisplay, setCheckOutDisplay] = useState(() => toDisplay(checkOut));
-
-  const nightsCount = checkIn && checkOut
-    ? Math.max(0, Math.round(
-        (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / (1000 * 60 * 60 * 24)
-      ))
-    : 0;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   const locale = language === "tr" ? "tr-TR" : "en-US";
 
-  const handleDateInput = (
-    raw: string,
-    setDisplay: (v: string) => void,
-    field: string
-  ) => {
-    const formatted = formatDateInput(raw);
-    setDisplay(formatted);
-    const iso = toISO(formatted);
-    onChange(field, iso); // "" until fully valid
-  };
+  // Reconstruct Date objects from ISO strings for DayPicker
+  const fromDate = checkIn ? new Date(checkIn) : undefined;
+  const toDate   = checkOut ? new Date(checkOut) : undefined;
+  const range: DateRange = { from: fromDate, to: toDate };
 
-  const inputStyle = {
-    borderColor: "var(--border-color)",
-    color: "var(--cream)",
-    fontFamily: "var(--font-raleway)",
-    background: "transparent",
-    touchAction: "manipulation" as const,
-    WebkitTapHighlightColor: "transparent",
-  };
+  const nightsCount =
+    fromDate && toDate
+      ? Math.max(0, Math.round((toDate.getTime() - fromDate.getTime()) / (1000 * 60 * 60 * 24)))
+      : 0;
 
-  const inputClass =
-    "w-full px-4 py-3.5 border text-sm transition-colors duration-300 outline-none focus:border-[var(--gold)]";
+  const handleSelect = (selected: DateRange | undefined) => {
+    const from = selected?.from;
+    const to   = selected?.to;
+    onChange("checkIn",  toISO(from));
+    onChange("checkOut", toISO(to));
+  };
 
   return (
     <div className="space-y-8">
+      {/* Title */}
       <div>
         <h2 className="text-4xl font-light italic mb-2" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
           {t.datePicker.title}
@@ -88,46 +66,21 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {/* Check-In */}
-        <div>
-          <label className="block text-xs tracking-[0.2em] uppercase mb-3 opacity-70" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
-            {t.datePicker.checkIn}
-          </label>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder={t.datePicker.datePlaceholder}
-            value={checkInDisplay}
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-            maxLength={10}
-            onChange={(e) => handleDateInput(e.target.value, setCheckInDisplay, "checkIn")}
-            className={inputClass}
-            style={inputStyle}
-          />
-        </div>
-
-        {/* Check-Out */}
-        <div>
-          <label className="block text-xs tracking-[0.2em] uppercase mb-3 opacity-70" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
-            {t.datePicker.checkOut}
-          </label>
-          <input
-            type="text"
-            inputMode="numeric"
-            placeholder={t.datePicker.datePlaceholder}
-            value={checkOutDisplay}
-            autoComplete="off"
-            autoCorrect="off"
-            spellCheck={false}
-            maxLength={10}
-            onChange={(e) => handleDateInput(e.target.value, setCheckOutDisplay, "checkOut")}
-            className={inputClass}
-            style={inputStyle}
-          />
-        </div>
+      {/* Selected date display */}
+      <div className="grid grid-cols-2 gap-4">
+        {[
+          { label: t.datePicker.checkIn,  date: fromDate },
+          { label: t.datePicker.checkOut, date: toDate   },
+        ].map(({ label, date }) => (
+          <div key={label} className="px-4 py-3 border" style={{ borderColor: date ? "var(--gold)" : "var(--border-color)", background: date ? "var(--gold-tint)" : "transparent" }}>
+            <p className="text-xs tracking-[0.2em] uppercase mb-1 opacity-60" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+              {label}
+            </p>
+            <p className="text-base" style={{ color: date ? "var(--cream)" : "var(--cream)", fontFamily: "var(--font-raleway)", opacity: date ? 1 : 0.3 }}>
+              {date ? toDisplay(date) : t.datePicker.datePlaceholder}
+            </p>
+          </div>
+        ))}
       </div>
 
       {/* Nights summary */}
@@ -141,17 +94,164 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
               {nightsCount === 1 ? t.datePicker.night : t.datePicker.nights}
             </p>
             <p className="text-xs opacity-50" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
-              {new Date(checkIn).toLocaleDateString(locale, { month: "short", day: "numeric" })} →{" "}
-              {new Date(checkOut).toLocaleDateString(locale, { month: "short", day: "numeric", year: "numeric" })}
+              {fromDate?.toLocaleDateString(locale, { month: "short", day: "numeric" })} →{" "}
+              {toDate?.toLocaleDateString(locale, { month: "short", day: "numeric", year: "numeric" })}
             </p>
           </div>
         </div>
       )}
 
+      {/* Calendar */}
+      <style>{`
+        .saros-calendar {
+          width: 100%;
+          font-family: var(--font-raleway);
+        }
+        .saros-calendar .rdp-month {
+          width: 100%;
+        }
+        .saros-calendar .rdp-months {
+          width: 100%;
+          justify-content: center;
+        }
+        .saros-calendar .rdp-month_grid {
+          width: 100%;
+          border-collapse: separate;
+          border-spacing: 2px;
+        }
+        .saros-calendar .rdp-month_caption {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 0 0.5rem 1rem;
+        }
+        .saros-calendar .rdp-caption_label {
+          font-size: 0.85rem;
+          letter-spacing: 0.15em;
+          text-transform: uppercase;
+          color: var(--cream);
+          font-family: var(--font-raleway);
+          font-weight: 500;
+        }
+        .saros-calendar .rdp-nav {
+          display: flex;
+          gap: 0.5rem;
+        }
+        .saros-calendar .rdp-button_previous,
+        .saros-calendar .rdp-button_next {
+          width: 2rem;
+          height: 2rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 1px solid var(--border-color);
+          background: transparent;
+          color: var(--cream);
+          cursor: pointer;
+          transition: all 0.2s;
+          opacity: 0.7;
+        }
+        .saros-calendar .rdp-button_previous:hover,
+        .saros-calendar .rdp-button_next:hover {
+          border-color: var(--gold);
+          color: var(--gold);
+          opacity: 1;
+        }
+        .saros-calendar .rdp-weekdays {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+          margin-bottom: 0.25rem;
+        }
+        .saros-calendar .rdp-weekday {
+          text-align: center;
+          font-size: 0.7rem;
+          letter-spacing: 0.1em;
+          text-transform: uppercase;
+          padding: 0.5rem 0;
+          color: var(--gold);
+          opacity: 0.6;
+          font-family: var(--font-raleway);
+        }
+        .saros-calendar .rdp-week {
+          display: grid;
+          grid-template-columns: repeat(7, 1fr);
+        }
+        .saros-calendar .rdp-day {
+          position: relative;
+          text-align: center;
+          padding: 0;
+        }
+        .saros-calendar .rdp-day_button {
+          width: 100%;
+          aspect-ratio: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.8rem;
+          color: var(--cream);
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          transition: all 0.15s;
+          border-radius: 0;
+          font-family: var(--font-raleway);
+        }
+        .saros-calendar .rdp-day_button:hover:not(:disabled) {
+          background: var(--gold-tint);
+          color: var(--gold);
+        }
+        .saros-calendar .rdp-outside .rdp-day_button {
+          opacity: 0.2;
+        }
+        .saros-calendar .rdp-disabled .rdp-day_button {
+          opacity: 0.15;
+          cursor: not-allowed;
+        }
+        .saros-calendar .rdp-today .rdp-day_button {
+          color: var(--gold);
+          font-weight: 600;
+          text-decoration: underline;
+          text-underline-offset: 3px;
+        }
+        /* Range start */
+        .saros-calendar .rdp-range_start .rdp-day_button {
+          background: var(--gold) !important;
+          color: #fff !important;
+          border-radius: 0;
+        }
+        /* Range end */
+        .saros-calendar .rdp-range_end .rdp-day_button {
+          background: var(--gold) !important;
+          color: #fff !important;
+          border-radius: 0;
+        }
+        /* Middle of range */
+        .saros-calendar .rdp-range_middle .rdp-day_button {
+          background: var(--gold-tint) !important;
+          color: var(--gold) !important;
+        }
+        /* Single day selected (start = end) */
+        .saros-calendar .rdp-selected .rdp-day_button {
+          background: var(--gold);
+          color: #fff;
+        }
+      `}</style>
+
+      <div className="border" style={{ borderColor: "var(--border-color)", background: "var(--dark-mid)", padding: "1.25rem" }}>
+        <DayPicker
+          className="saros-calendar"
+          mode="range"
+          selected={range}
+          onSelect={handleSelect}
+          disabled={{ before: today }}
+          showOutsideDays
+        />
+      </div>
+
       {/* Guest count */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {[
-          { label: t.datePicker.adults, value: adults, field: "adults", min: 1, max: 6 },
+          { label: t.datePicker.adults,   value: adults,   field: "adults",   min: 1, max: 6 },
           { label: t.datePicker.children, value: children, field: "children", min: 0, max: 4 },
         ].map(({ label, value, field, min, max }) => (
           <div key={field}>
