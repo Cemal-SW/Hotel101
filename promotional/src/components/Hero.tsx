@@ -92,8 +92,8 @@ export default function Hero({ reservationUrl }: HeroProps) {
 
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <a
-            href="#rooms"
+          <button
+            onClick={() => document.getElementById("rooms")?.scrollIntoView({ behavior: "smooth" })}
             className="px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:opacity-90"
             style={{
               background: "var(--gold)",
@@ -103,7 +103,7 @@ export default function Hero({ reservationUrl }: HeroProps) {
             }}
           >
             {t.hero.exploreRooms}
-          </a>
+          </button>
           <a
             href={reservationUrl}
             className="px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300"

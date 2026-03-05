@@ -22,10 +22,15 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
   }, []);
 
   const navLinks = [
-    { label: t.nav.rooms, href: "#rooms" },
-    { label: t.nav.amenities, href: "#amenities" },
-    { label: t.nav.location, href: "#location" },
+    { label: t.nav.rooms, target: "rooms" },
+    { label: t.nav.amenities, target: "amenities" },
+    { label: t.nav.location, target: "location" },
   ];
+
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: "smooth" });
+  };
 
   return (
     <header
@@ -72,9 +77,9 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
           }}
         >
           {navLinks.map((link) => (
-            <a
+            <button
               key={link.label}
-              href={link.href}
+              onClick={() => scrollTo(link.target)}
               className="px-4 py-1.5 text-sm tracking-[0.12em] uppercase rounded-full transition-all duration-300 hover:bg-white/15"
               style={{
                 color: scrolled ? "var(--cream)" : "#F5EFE7",
@@ -82,7 +87,7 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
               }}
             >
               {link.label}
-            </a>
+            </button>
           ))}
 
           <div className="w-px h-4 mx-1" style={{ background: scrolled ? "var(--border-color)" : "rgba(255,255,255,0.25)" }} />
@@ -140,15 +145,14 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
       >
         <div className="flex flex-col items-center gap-6 pt-6">
           {navLinks.map((link) => (
-            <a
+            <button
               key={link.label}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
+              onClick={() => { scrollTo(link.target); setMenuOpen(false); }}
               className="text-sm tracking-[0.15em] uppercase"
               style={{ color: "#F5EFE7", fontFamily: "var(--font-raleway)" }}
             >
               {link.label}
-            </a>
+            </button>
           ))}
           <a
             href={reservationUrl}
