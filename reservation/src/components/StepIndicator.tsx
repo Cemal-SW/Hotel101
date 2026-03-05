@@ -20,8 +20,9 @@ export default function StepIndicator({ currentStep, totalSteps, steps }: StepIn
                 className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300"
                 style={{
                   background: isCompleted || isCurrent ? "var(--gold)" : "transparent",
-                  border: `1px solid ${isCompleted || isCurrent ? "var(--gold)" : "rgba(255,255,255,0.2)"}`,
-                  color: isCompleted || isCurrent ? "var(--dark)" : "rgba(245,240,232,0.4)",
+                  border: `1px solid ${isCompleted || isCurrent ? "var(--gold)" : "var(--border-strong)"}`,
+                  color: isCompleted || isCurrent ? "var(--dark)" : "var(--cream)",
+                  opacity: isCompleted || isCurrent ? 1 : 0.4,
                   fontFamily: "var(--font-raleway)",
                 }}
               >
@@ -36,9 +37,10 @@ export default function StepIndicator({ currentStep, totalSteps, steps }: StepIn
               <span
                 className="text-xs tracking-wider uppercase hidden sm:block"
                 style={{
-                  color: isCurrent ? "var(--gold)" : "rgba(245,240,232,0.4)",
+                  color: isCurrent ? "var(--gold)" : "var(--cream)",
                   fontFamily: "var(--font-raleway)",
                   fontWeight: isCurrent ? 500 : 300,
+                  opacity: isCurrent ? 1 : 0.4,
                 }}
               >
                 {step}
@@ -50,9 +52,7 @@ export default function StepIndicator({ currentStep, totalSteps, steps }: StepIn
               <div
                 className="w-16 sm:w-24 h-px mx-2 mb-5 transition-all duration-300"
                 style={{
-                  background: isCompleted
-                    ? "var(--gold)"
-                    : "rgba(255,255,255,0.15)",
+                  background: isCompleted ? "var(--gold)" : "var(--border-color)",
                 }}
               />
             )}

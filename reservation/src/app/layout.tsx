@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Raleway } from "next/font/google";
+import ThemeProvider from "@/components/ThemeProvider";
+import LanguageProvider from "@/components/LanguageProvider";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -16,8 +18,8 @@ const raleway = Raleway({
 });
 
 export const metadata: Metadata = {
-  title: "Hotel 101 | Reservation",
-  description: "Book your stay at Hotel 101 — a luxury experience awaits you.",
+  title: "Saros Vadi | Reservation",
+  description: "Book your stay at Saros Vadi — a Mediterranean luxury experience awaits you.",
 };
 
 export default function RootLayout({
@@ -27,8 +29,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Apply stored theme before paint to prevent flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('hotel101-theme');document.documentElement.setAttribute('data-theme',t||'light');var l=localStorage.getItem('sarosvadi-lang');document.documentElement.lang=l||'tr';}catch(e){}})();`,
+          }}
+        />
+      </head>
       <body className={`${cormorant.variable} ${raleway.variable} antialiased`}>
-        {children}
+        <ThemeProvider><LanguageProvider>{children}</LanguageProvider></ThemeProvider>
       </body>
     </html>
   );

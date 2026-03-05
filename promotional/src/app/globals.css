@@ -1,14 +1,36 @@
 @import "tailwindcss";
 
+/* ── Light theme — DEFAULT (inspired by Saros video palette) ── */
 :root {
-  --background: #0e0d0b;
-  --foreground: #f5f0e8;
-  --gold: #c9a84c;
-  --gold-light: #e8c97a;
-  --cream: #f5f0e8;
-  --dark: #0e0d0b;
-  --dark-mid: #1a1814;
+  --background: #F7F2EC;
+  --foreground: #2C211A;
+  --gold: #A85C3A;
+  --gold-light: #C87E42;
+  --gold-tint: rgba(168, 92, 58, 0.08);
+  --cream: #2C211A;
+  --dark: #F7F2EC;
+  --dark-mid: #EDE4D6;
   --font-sans: var(--font-cormorant);
+  --border-color: rgba(44, 33, 26, 0.1);
+  --border-strong: rgba(44, 33, 26, 0.2);
+  --nav-bg: rgba(247, 242, 236, 0.95);
+  --nav-mobile-bg: rgba(247, 242, 236, 0.98);
+}
+
+/* ── Dark theme — override ─────────────────────────────────── */
+[data-theme="dark"] {
+  --background: #2C211A;
+  --foreground: #F5EFE7;
+  --gold: #C87E42;
+  --gold-light: #E8A060;
+  --gold-tint: rgba(200, 126, 66, 0.08);
+  --cream: #F5EFE7;
+  --dark: #2C211A;
+  --dark-mid: #3D2E24;
+  --border-color: rgba(245, 239, 231, 0.12);
+  --border-strong: rgba(245, 239, 231, 0.22);
+  --nav-bg: rgba(44, 33, 26, 0.95);
+  --nav-mobile-bg: rgba(44, 33, 26, 0.98);
 }
 
 @theme inline {
@@ -31,11 +53,12 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans), Georgia, serif;
   overflow-x: hidden;
+  transition: background-color 0.35s ease, color 0.35s ease;
 }
 
 ::selection {
   background: var(--gold);
-  color: var(--dark);
+  color: #fff;
 }
 
 ::-webkit-scrollbar {
@@ -43,7 +66,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--dark);
+  background: var(--dark-mid);
 }
 
 ::-webkit-scrollbar-thumb {
