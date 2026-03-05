@@ -12,7 +12,7 @@ const BASE_ROOMS: Omit<Room, "name" | "description" | "features">[] = [
 
 interface RoomSelectorProps {
   selectedRoomId: string;
-  onSelect: (roomId: string, room?: Room) => void;
+  onSelect: (roomId: string) => void;
   nights: number;
 }
 
@@ -42,7 +42,7 @@ export default function RoomSelector({ selectedRoomId, onSelect, nights }: RoomS
             key={room.id}
             room={room}
             isSelected={selectedRoomId === room.id}
-            onSelect={(id) => onSelect(id, rooms.find(r => r.id === id))}
+            onSelect={onSelect}
             nights={nights}
             perNightLabel={t.roomSelector.perNight}
             nightsTotalLabel={t.roomSelector.nightsTotal}

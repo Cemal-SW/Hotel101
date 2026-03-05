@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="tr" suppressHydrationWarning>
       <head>
         {/* Apply stored theme before paint to prevent flash */}
         <script

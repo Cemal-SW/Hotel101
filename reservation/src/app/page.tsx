@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import StepIndicator from "@/components/StepIndicator";
 import DateRangePicker from "@/components/DateRangePicker";
 import RoomSelector from "@/components/RoomSelector";
@@ -11,6 +11,29 @@ import ThemeToggle from "@/components/ThemeToggle";
 import LanguageToggle from "@/components/LanguageToggle";
 import { useLanguage } from "@/components/LanguageProvider";
 import { Room } from "@/components/RoomCard";
+
+const BASE_PRICES: Record<string, number> = {
+  "junior-suite-king": 280,
+  "junior-suite-twin": 260,
+  "superior-king":     210,
+  "deluxe-suite":      480,
+};
+
+const BASE_SIZES: Record<string, string> = {
+  "junior-suite-king": "35 m²",
+  "junior-suite-twin": "35 m²",
+  "superior-king":     "28 m²",
+  "deluxe-suite":      "55 m²",
+};
+
+const BASE_IMAGES: Record<string, string> = {
+  "junior-suite-king": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
+  "junior-suite-twin": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80",
+  "superior-king":     "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80",
+  "deluxe-suite":      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80",
+};
+
+const ROOM_IDS = ["junior-suite-king", "junior-suite-twin", "superior-king", "deluxe-suite"];
 
 const PROMOTIONAL_URL = process.env.NEXT_PUBLIC_PROMOTIONAL_URL || "http://localhost:3000";
 
@@ -23,53 +46,49 @@ interface StayDetails {
 
 export default function ReservationPage() {
   const { t } = useLanguage();
+
   const [currentStep, setCurrentStep] = useState(1);
   const [confirmed, setConfirmed] = useState(false);
-
-  const [stayDetails, setStayDetails] = useState<StayDetails>({
-    checkIn: "",
-    checkOut: "",
-    adults: 1,
-    children: 0,
-  });
-
+  const [stayDetails, setStayDetails] = useState<StayDetails>({ checkIn: "", checkOut: "", adults: 1, children: 0 });
   const [selectedRoomId, setSelectedRoomId] = useState("");
-  const [selectedRoom, setSelectedRoom] = useState<Room | undefined>(undefined);
+  const [guestInfo, setGuestInfo] = useState<GuestInfo>({ firstName: "", lastName: "", email: "", phone: "", specialRequests: "" });
 
-  const [guestInfo, setGuestInfo] = useState<GuestInfo>({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    specialRequests: "",
-  });
+  const nights = useMemo(() => {
+    if (!stayDetails.checkIn || !stayDetails.checkOut) return 0;
+    return Math.max(0, Math.round(
+      (new Date(stayDetails.checkOut).getTime() - new Date(stayDetails.checkIn).getTime()) / (1000 * 60 * 60 * 24)
+    ));
+  }, [stayDetails.checkIn, stayDetails.checkOut]);
 
-  const nights =
-    stayDetails.checkIn && stayDetails.checkOut
-      ? Math.max(0, Math.round((new Date(stayDetails.checkOut).getTime() - new Date(stayDetails.checkIn).getTime()) / (1000 * 60 * 60 * 24)))
-      : 0;
+  // Derive the selected room from current translations so it's always up-to-date
+  const selectedRoom = useMemo((): Room | undefined => {
+    if (!selectedRoomId) return undefined;
+    const idx = ROOM_IDS.indexOf(selectedRoomId);
+    if (idx === -1) return undefined;
+    return {
+      id: selectedRoomId,
+      name: t.roomSelector.items[idx].name,
+      description: t.roomSelector.items[idx].description,
+      features: [...t.roomSelector.items[idx].features],
+      pricePerNight: BASE_PRICES[selectedRoomId],
+      size: BASE_SIZES[selectedRoomId],
+      image: BASE_IMAGES[selectedRoomId],
+      maxGuests: selectedRoomId === "deluxe-suite" ? 4 : 2,
+    };
+  }, [selectedRoomId, t]);
 
-  const handleStayChange = (field: string, value: string | number) => {
-    setStayDetails((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleGuestChange = (field: keyof GuestInfo, value: string) => {
-    setGuestInfo((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const handleRoomSelect = (roomId: string, room?: Room) => {
-    setSelectedRoomId(roomId);
-    if (room) setSelectedRoom(room);
-  };
-
-  const canProceedStep1 = stayDetails.checkIn && stayDetails.checkOut && nights > 0;
+  const canProceedStep1 = !!(stayDetails.checkIn && stayDetails.checkOut && nights > 0);
   const canProceedStep2 = !!selectedRoomId;
-  const canProceedStep3 = guestInfo.firstName && guestInfo.lastName && guestInfo.email && guestInfo.phone;
-  const canProceed = currentStep === 1 ? canProceedStep1 : currentStep === 2 ? canProceedStep2 : currentStep === 3 ? canProceedStep3 : true;
+  const canProceedStep3 = !!(guestInfo.firstName && guestInfo.lastName && guestInfo.email && guestInfo.phone);
 
-  const handleNext = () => { if (currentStep < 4) setCurrentStep((s) => s + 1); };
-  const handleBack = () => { if (currentStep > 1) setCurrentStep((s) => s - 1); };
-  const handleConfirm = () => { setConfirmed(true); };
+  const canProceed =
+    currentStep === 1 ? canProceedStep1 :
+    currentStep === 2 ? canProceedStep2 :
+    currentStep === 3 ? canProceedStep3 :
+    true;
+
+  const handleNext = () => { if (currentStep < 4) setCurrentStep(s => s + 1); };
+  const handleBack = () => { if (currentStep > 1) setCurrentStep(s => s - 1); };
 
   const steps = [...t.page.steps];
 
@@ -84,15 +103,19 @@ export default function ReservationPage() {
     </a>
   );
 
+  const HeaderControls = () => (
+    <div className="flex items-center gap-3">
+      <LanguageToggle />
+      <ThemeToggle />
+    </div>
+  );
+
   if (confirmed) {
     return (
       <div className="min-h-screen flex flex-col" style={{ background: "var(--dark)" }}>
         <header className="px-6 lg:px-12 h-20 flex items-center justify-between border-b" style={{ borderColor: "var(--border-color)" }}>
           <Logo />
-          <div className="flex items-center gap-3">
-            <LanguageToggle />
-            <ThemeToggle />
-          </div>
+          <HeaderControls />
         </header>
         <main className="flex-1 flex items-center justify-center">
           <ConfirmationSuccess firstName={guestInfo.firstName} email={guestInfo.email} promotionalUrl={PROMOTIONAL_URL} />
@@ -106,8 +129,7 @@ export default function ReservationPage() {
       <header className="px-6 lg:px-12 h-20 flex items-center justify-between border-b" style={{ borderColor: "var(--border-color)" }}>
         <Logo />
         <div className="flex items-center gap-4">
-          <LanguageToggle />
-          <ThemeToggle />
+          <HeaderControls />
           <a
             href={PROMOTIONAL_URL}
             className="hidden sm:flex items-center gap-2 text-sm opacity-50 hover:opacity-100 transition-opacity duration-300"
@@ -139,18 +161,21 @@ export default function ReservationPage() {
               checkOut={stayDetails.checkOut}
               adults={stayDetails.adults}
               children={stayDetails.children}
-              onChange={handleStayChange}
+              onChange={(field, value) => setStayDetails(prev => ({ ...prev, [field]: value }))}
             />
           )}
           {currentStep === 2 && (
             <RoomSelector
               selectedRoomId={selectedRoomId}
-              onSelect={(id, room) => handleRoomSelect(id, room)}
+              onSelect={setSelectedRoomId}
               nights={nights}
             />
           )}
           {currentStep === 3 && (
-            <GuestForm guestInfo={guestInfo} onChange={handleGuestChange} />
+            <GuestForm
+              guestInfo={guestInfo}
+              onChange={(field, value) => setGuestInfo(prev => ({ ...prev, [field]: value }))}
+            />
           )}
           {currentStep === 4 && (
             <BookingSummary
@@ -165,11 +190,13 @@ export default function ReservationPage() {
           )}
         </div>
 
+        {/* Navigation buttons */}
         <div className="flex items-center justify-between">
           <button
+            type="button"
             onClick={handleBack}
             disabled={currentStep === 1}
-            className="flex items-center gap-2 text-sm tracking-wide px-6 py-3 border transition-all duration-300 disabled:opacity-20 hover:bg-black/5 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 text-sm tracking-wide px-6 py-3 border transition-all duration-300 disabled:opacity-20 hover:enabled:bg-black/5 disabled:cursor-not-allowed"
             style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
@@ -180,10 +207,15 @@ export default function ReservationPage() {
 
           {currentStep < 4 ? (
             <button
+              type="button"
               onClick={handleNext}
               disabled={!canProceed}
-              className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase px-10 py-3.5 transition-all duration-300 disabled:opacity-30 disabled:cursor-not-allowed hover:opacity-90"
-              style={{ background: canProceed ? "var(--gold)" : "var(--gold-tint)", color: "var(--dark)", fontFamily: "var(--font-raleway)" }}
+              className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase px-10 py-3.5 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed hover:enabled:opacity-90"
+              style={{
+                background: "var(--gold)",
+                color: "#fff",
+                fontFamily: "var(--font-raleway)",
+              }}
             >
               {t.nav.continue}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
@@ -192,9 +224,10 @@ export default function ReservationPage() {
             </button>
           ) : (
             <button
-              onClick={handleConfirm}
+              type="button"
+              onClick={() => setConfirmed(true)}
               className="flex items-center gap-2 text-sm tracking-[0.15em] uppercase px-10 py-3.5 transition-all duration-300 hover:opacity-90"
-              style={{ background: "var(--gold)", color: "var(--dark)", fontFamily: "var(--font-raleway)" }}
+              style={{ background: "var(--gold)", color: "#fff", fontFamily: "var(--font-raleway)" }}
             >
               {t.nav.confirmReservation}
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
