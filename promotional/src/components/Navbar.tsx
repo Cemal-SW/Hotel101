@@ -85,7 +85,9 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
             background: scrolled ? "transparent" : "rgba(255, 255, 255, 0.12)",
             backdropFilter: scrolled ? "none" : "blur(20px)",
             border: scrolled ? "none" : "1px solid rgba(255, 255, 255, 0.2)",
-            boxShadow: scrolled ? "none" : "0 4px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.15)",
+            boxShadow: scrolled
+              ? "none"
+              : "0 4px 24px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.15)",
           }}
         >
           {navLinks.map((link) => (
@@ -102,7 +104,14 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
             </button>
           ))}
 
-          <div className="w-px h-4 mx-1" style={{ background: scrolled ? "var(--border-color)" : "rgba(255,255,255,0.25)" }} />
+          <div
+            className="w-px h-4 mx-1"
+            style={{
+              background: scrolled
+                ? "var(--border-color)"
+                : "rgba(255,255,255,0.25)",
+            }}
+          />
 
           <LanguageToggle isOverVideo={!scrolled} />
           <ThemeToggle />
@@ -131,15 +140,21 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
             aria-label="Toggle menu"
           >
             <span
-              className={`block w-6 h-px transition-all duration-300 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+              className={`block w-6 h-px transition-all duration-300 ${
+                menuOpen ? "rotate-45 translate-y-2" : ""
+              }`}
               style={{ background: scrolled ? "var(--gold)" : "#F5EFE7" }}
             />
             <span
-              className={`block w-6 h-px transition-all duration-300 ${menuOpen ? "opacity-0" : ""}`}
+              className={`block w-6 h-px transition-all duration-300 ${
+                menuOpen ? "opacity-0" : ""
+              }`}
               style={{ background: scrolled ? "var(--gold)" : "#F5EFE7" }}
             />
             <span
-              className={`block w-6 h-px transition-all duration-300 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+              className={`block w-6 h-px transition-all duration-300 ${
+                menuOpen ? "-rotate-45 -translate-y-2" : ""
+              }`}
               style={{ background: scrolled ? "var(--gold)" : "#F5EFE7" }}
             />
           </button>
@@ -148,7 +163,9 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
 
       {/* Mobile menu */}
       <div
-        className={`md:hidden transition-all duration-300 overflow-hidden ${menuOpen ? "max-h-80 pb-6" : "max-h-0"}`}
+        className={`md:hidden transition-all duration-300 overflow-hidden ${
+          menuOpen ? "max-h-80 pb-6" : "max-h-0"
+        }`}
         style={{
           background: "rgba(44, 33, 26, 0.9)",
           backdropFilter: "blur(20px)",
@@ -159,7 +176,10 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
           {navLinks.map((link) => (
             <button
               key={link.label}
-              onClick={() => { scrollTo(link.target); setMenuOpen(false); }}
+              onClick={() => {
+                scrollTo(link.target);
+                setMenuOpen(false);
+              }}
               className="text-sm tracking-[0.15em] uppercase"
               style={{ color: "#F5EFE7", fontFamily: "var(--font-raleway)" }}
             >
@@ -169,7 +189,11 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
           <a
             href={reservationUrl}
             className="px-8 py-3 rounded-full text-sm tracking-[0.15em] uppercase font-medium"
-            style={{ background: "var(--gold)", color: "#fff", fontFamily: "var(--font-raleway)" }}
+            style={{
+              background: "var(--gold)",
+              color: "#fff",
+              fontFamily: "var(--font-raleway)",
+            }}
           >
             {t.nav.bookNow}
           </a>

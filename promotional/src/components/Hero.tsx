@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useLanguage } from "./LanguageProvider";
 
@@ -31,13 +31,14 @@ export default function Hero({ reservationUrl }: HeroProps) {
         }}
       />
 
-      {/* Decorative line */}
       <div className="absolute top-28 left-1/2 -translate-x-1/2">
-        <div className="w-px h-16" style={{ background: "linear-gradient(to bottom, transparent, var(--gold))" }} />
+        <div
+          className="w-px h-16"
+          style={{ background: "linear-gradient(to bottom, transparent, var(--gold))" }}
+        />
       </div>
 
       <div className="relative z-10 text-center px-6 flex flex-col items-center">
-        {/* Subtitle pill */}
         <p
           className="text-xs tracking-[0.5em] uppercase mb-8 px-4 py-1.5 rounded-full"
           style={{
@@ -51,7 +52,6 @@ export default function Hero({ reservationUrl }: HeroProps) {
           {t.hero.subtitle}
         </p>
 
-        {/* Main title */}
         <h1
           className="font-light italic leading-none mb-1"
           style={{
@@ -75,7 +75,6 @@ export default function Hero({ reservationUrl }: HeroProps) {
           Vadi
         </h2>
 
-        {/* Tagline */}
         <p
           className="max-w-2xl text-center font-light italic leading-tight mb-12"
           style={{
@@ -88,10 +87,11 @@ export default function Hero({ reservationUrl }: HeroProps) {
           {t.hero.tagline}
         </p>
 
-        {/* CTAs */}
         <div className="flex flex-col sm:flex-row gap-4">
           <button
-            onClick={() => document.getElementById("rooms")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() =>
+              document.getElementById("rooms")?.scrollIntoView({ behavior: "smooth" })
+            }
             className="px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:opacity-90"
             style={{
               background: "var(--gold)",
@@ -112,14 +112,17 @@ export default function Hero({ reservationUrl }: HeroProps) {
               background: "rgba(255,255,255,0.08)",
               backdropFilter: "blur(8px)",
             }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.18)"; }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.08)"; }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.18)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255,255,255,0.08)";
+            }}
           >
             {t.hero.bookNow}
           </a>
         </div>
       </div>
-
     </section>
   );
 }

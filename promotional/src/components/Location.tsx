@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Image from "next/image";
 import { useLanguage } from "./LanguageProvider";
@@ -41,17 +41,31 @@ export default function Location({ reservationUrl }: LocationProps) {
         <div className="max-w-3xl mx-auto text-center">
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
-            <span className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+            <span
+              className="text-xs tracking-[0.3em] uppercase"
+              style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}
+            >
               {t.location.tag}
             </span>
             <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
           </div>
 
-          <h2 className="text-5xl md:text-6xl font-light italic leading-tight mb-6" style={{ color: "#F5EFE7", fontFamily: "var(--font-cormorant)" }}>
-            {t.location.title} <span style={{ color: "var(--gold)" }}>{t.location.titleHighlight}</span>
+          <h2
+            className="text-5xl md:text-6xl font-light italic leading-tight mb-6"
+            style={{ color: "#F5EFE7", fontFamily: "var(--font-cormorant)" }}
+          >
+            {t.location.title}{" "}
+            <span style={{ color: "var(--gold)" }}>{t.location.titleHighlight}</span>
           </h2>
 
-          <p className="text-base leading-8 md:text-lg mb-12" style={{ color: "rgba(245,239,231,0.76)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+          <p
+            className="text-base leading-8 md:text-lg mb-12"
+            style={{
+              color: "rgba(245,239,231,0.76)",
+              fontFamily: "var(--font-raleway)",
+              fontWeight: 300,
+            }}
+          >
             {t.location.description}
           </p>
         </div>
@@ -77,7 +91,13 @@ export default function Location({ reservationUrl }: LocationProps) {
                     background: cardSurfaces[index % cardSurfaces.length],
                   }}
                 >
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(12,10,9,0.05) 0%, rgba(12,10,9,0.3) 100%)" }} />
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(12,10,9,0.05) 0%, rgba(12,10,9,0.3) 100%)",
+                    }}
+                  />
                   <div
                     className="absolute inset-4 border"
                     style={{ borderColor: "rgba(245,239,231,0.28)" }}
@@ -105,7 +125,11 @@ export default function Location({ reservationUrl }: LocationProps) {
                   </h3>
                   <p
                     className="text-[12px] leading-6 md:text-[13px] md:leading-6"
-                    style={{ color: "rgba(245,239,231,0.82)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}
+                    style={{
+                      color: "rgba(245,239,231,0.82)",
+                      fontFamily: "var(--font-raleway)",
+                      fontWeight: 300,
+                    }}
                   >
                     {card.description}
                   </p>
