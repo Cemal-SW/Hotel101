@@ -1,0 +1,144 @@
+@import "tailwindcss";
+
+/* ── Light theme — DEFAULT (inspired by Saros video palette) ── */
+:root {
+  --background: #F7F2EC;
+  --foreground: #2C211A;
+  --gold: #A85C3A;
+  --gold-light: #C87E42;
+  --gold-tint: rgba(168, 92, 58, 0.08);
+  --cream: #2C211A;
+  --dark: #F7F2EC;
+  --dark-mid: #EDE4D6;
+  --font-sans: var(--font-cormorant);
+  --border-color: rgba(44, 33, 26, 0.1);
+  --border-strong: rgba(44, 33, 26, 0.2);
+  --nav-bg: rgba(247, 242, 236, 0.95);
+  --nav-mobile-bg: rgba(247, 242, 236, 0.98);
+}
+
+/* ── Dark theme — override ─────────────────────────────────── */
+[data-theme="dark"] {
+  --background: #2C211A;
+  --foreground: #F5EFE7;
+  --gold: #C87E42;
+  --gold-light: #E8A060;
+  --gold-tint: rgba(200, 126, 66, 0.08);
+  --cream: #F5EFE7;
+  --dark: #2C211A;
+  --dark-mid: #3D2E24;
+  --border-color: rgba(245, 239, 231, 0.12);
+  --border-strong: rgba(245, 239, 231, 0.22);
+  --nav-bg: rgba(44, 33, 26, 0.95);
+  --nav-mobile-bg: rgba(44, 33, 26, 0.98);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-cream: var(--cream);
+  --color-dark: var(--dark);
+  --color-dark-mid: var(--dark-mid);
+  --font-sans: var(--font-cormorant);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Georgia, serif;
+  overflow-x: hidden;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+::selection {
+  background: var(--gold);
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-mid);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 3px;
+}
+
+.services-track {
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 0.25rem;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  cursor: grab;
+}
+
+.services-track::-webkit-scrollbar {
+  display: none;
+}
+
+.services-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  user-select: none;
+}
+
+.services-track.is-dragging .service-card {
+  pointer-events: none;
+}
+
+.service-card {
+  border: 1px solid var(--border-color);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.14);
+  transform: translateY(0) scale(1);
+  transform-origin: center center;
+  transition:
+    transform 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 700ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 400ms ease;
+}
+
+.service-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.2);
+  border-color: var(--border-strong);
+}
+
+.service-card-media {
+  transform: scale(1);
+  transition: transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.service-card:hover .service-card-media {
+  transform: scale(1.02);
+}
+
+.service-card-glow {
+  opacity: 0.45;
+  transition:
+    transform 800ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 600ms ease;
+}
+
+.service-card:hover .service-card-glow {
+  opacity: 0.7;
+  transform: translate(-10px, -50%);
+}
+
+@media (max-width: 767px) {
+  .service-card:hover {
+    transform: none;
+    box-shadow: 0 18px 60px rgba(0, 0, 0, 0.14);
+  }
+}
