@@ -24,13 +24,13 @@ export default function Rooms({ reservationUrl }: RoomsProps) {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
-          <span className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+          <span className="text-[0.92rem] tracking-[0.24em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
             {t.rooms.tag}
           </span>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <h2 className="text-5xl md:text-6xl font-light italic leading-tight" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+          <h2 className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
             {t.rooms.title}
           </h2>
           <a
@@ -46,7 +46,7 @@ export default function Rooms({ reservationUrl }: RoomsProps) {
           {t.rooms.items.map((room, index) => (
             <div
               key={room.name}
-              className="group overflow-hidden border transition-all duration-500"
+              className="group flex h-full flex-col overflow-hidden rounded-[2rem] border transition-all duration-500"
               style={{ borderColor: "var(--border-color)", background: "var(--dark)" }}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(168,92,58,0.4)")}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--border-color)")}
@@ -67,17 +67,17 @@ export default function Rooms({ reservationUrl }: RoomsProps) {
                 </div>
               </div>
 
-              <div className="p-8">
-                <h3 className="text-2xl font-light italic mb-3" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+              <div className="flex h-full flex-col p-8">
+                <h3 className="text-[2rem] md:text-[2.2rem] font-light italic mb-3 tracking-[-0.03em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
                   {room.name}
                 </h3>
-                <p className="text-sm leading-7 mb-6 opacity-65" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+                <p className="mb-6 opacity-65" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
                   {room.description}
                 </p>
 
                 <div className="flex flex-wrap gap-2 mb-8">
                   {room.features.map((f) => (
-                    <span key={f} className="text-xs px-3 py-1 border tracking-wide" style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+                    <span key={f} className="rounded-full text-xs px-3 py-1 border tracking-wide" style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
                       {f}
                     </span>
                   ))}
@@ -85,7 +85,7 @@ export default function Rooms({ reservationUrl }: RoomsProps) {
 
                 <a
                   href={reservationUrl}
-                  className="inline-block px-8 py-3 text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-90"
+                  className="mt-auto inline-flex w-fit rounded-full px-8 py-3 text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-90"
                   style={{ background: "var(--gold)", color: "#fff", fontFamily: "var(--font-raleway)" }}
                 >
                   {t.rooms.bookRoom}

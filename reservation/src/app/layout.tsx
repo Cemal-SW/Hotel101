@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Raleway } from "next/font/google";
+import { Cormorant_Garamond } from "next/font/google";
 import ThemeProvider from "@/components/ThemeProvider";
 import LanguageProvider from "@/components/LanguageProvider";
 import "./globals.css";
@@ -11,10 +11,11 @@ const cormorant = Cormorant_Garamond({
   style: ["normal", "italic"],
 });
 
-const raleway = Raleway({
+const interfaceFont = Cormorant_Garamond({
   variable: "--font-raleway",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 export const metadata: Metadata = {
@@ -37,7 +38,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${cormorant.variable} ${raleway.variable} antialiased`}>
+      <body className={`${cormorant.variable} ${interfaceFont.variable} antialiased`}>
         <ThemeProvider><LanguageProvider>{children}</LanguageProvider></ThemeProvider>
       </body>
     </html>

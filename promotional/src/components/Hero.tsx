@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useLanguage } from "./LanguageProvider";
 
@@ -40,7 +40,7 @@ export default function Hero({ reservationUrl }: HeroProps) {
 
       <div className="relative z-10 text-center px-6 flex flex-col items-center">
         <p
-          className="text-xs tracking-[0.5em] uppercase mb-8 px-4 py-1.5 rounded-full"
+          className="mb-8 rounded-full px-3.5 py-1.5 text-[11px] tracking-[0.44em] uppercase"
           style={{
             color: "var(--gold)",
             fontFamily: "var(--font-raleway)",
@@ -53,22 +53,22 @@ export default function Hero({ reservationUrl }: HeroProps) {
         </p>
 
         <h1
-          className="font-light italic leading-none mb-1"
+          className="font-light italic leading-none mb-1 tracking-[-0.045em]"
           style={{
             color: "#FFFFFF",
             fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(5rem, 14vw, 10rem)",
+            fontSize: "clamp(5.4rem, 14.8vw, 10.8rem)",
             textShadow: "0 2px 40px rgba(0,0,0,0.8), 0 0 80px rgba(0,0,0,0.5)",
           }}
         >
           Saros
         </h1>
         <h2
-          className="font-bold tracking-[0.25em] uppercase leading-none mb-10"
+          className="font-bold tracking-[0.18em] uppercase leading-none mb-10"
           style={{
             color: "var(--gold)",
             fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(2.5rem, 7vw, 5.5rem)",
+            fontSize: "clamp(2.8rem, 7.6vw, 5.9rem)",
             textShadow: "0 2px 30px rgba(0,0,0,0.9), 0 0 60px rgba(0,0,0,0.6)",
           }}
         >
@@ -76,11 +76,11 @@ export default function Hero({ reservationUrl }: HeroProps) {
         </h2>
 
         <p
-          className="max-w-2xl text-center font-light italic leading-tight mb-12"
+          className="max-w-[44rem] text-center font-light italic leading-tight mb-12"
           style={{
             color: "#FFFFFF",
             fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(1.3rem, 2.5vw, 2rem)",
+            fontSize: "clamp(1.45rem, 2.8vw, 2.15rem)",
             textShadow: "0 2px 24px rgba(0,0,0,0.75), 0 0 40px rgba(0,0,0,0.35)",
           }}
         >
@@ -92,7 +92,7 @@ export default function Hero({ reservationUrl }: HeroProps) {
             onClick={() =>
               document.getElementById("rooms")?.scrollIntoView({ behavior: "smooth" })
             }
-            className="px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:opacity-90"
+            className="rounded-full px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:opacity-90"
             style={{
               background: "var(--gold)",
               color: "#fff",
@@ -104,7 +104,7 @@ export default function Hero({ reservationUrl }: HeroProps) {
           </button>
           <a
             href={reservationUrl}
-            className="px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300"
+            className="rounded-full px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300"
             style={{
               color: "#FFFFFF",
               fontFamily: "var(--font-raleway)",

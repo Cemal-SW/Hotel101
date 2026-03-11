@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { DayPicker, DateRange } from "react-day-picker";
 import { useLanguage } from "./LanguageProvider";
 
@@ -58,10 +57,10 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
     <div className="space-y-8">
       {/* Title */}
       <div>
-        <h2 className="text-4xl font-light italic mb-2" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+        <h2 className="text-[3rem] md:text-[3.6rem] font-light italic mb-2 tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
           {t.datePicker.title}
         </h2>
-        <p className="text-sm opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+        <p className="text-[1.1rem] opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
           {t.datePicker.subtitle}
         </p>
       </div>
@@ -72,11 +71,11 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
           { label: t.datePicker.checkIn,  date: fromDate },
           { label: t.datePicker.checkOut, date: toDate   },
         ].map(({ label, date }) => (
-          <div key={label} className="px-4 py-3 border" style={{ borderColor: date ? "var(--gold)" : "var(--border-color)", background: date ? "var(--gold-tint)" : "transparent" }}>
-            <p className="text-xs tracking-[0.2em] uppercase mb-1 opacity-60" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+          <div key={label} className="rounded-[1.75rem] px-5 py-4 border" style={{ borderColor: date ? "var(--gold)" : "var(--border-color)", background: date ? "var(--gold-tint)" : "transparent" }}>
+            <p className="mb-1 text-[0.88rem] tracking-[0.18em] uppercase opacity-60" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
               {label}
             </p>
-            <p className="text-base" style={{ color: date ? "var(--cream)" : "var(--cream)", fontFamily: "var(--font-raleway)", opacity: date ? 1 : 0.3 }}>
+            <p className="text-[1.42rem]" style={{ color: date ? "var(--cream)" : "var(--cream)", fontFamily: "var(--font-raleway)", opacity: date ? 1 : 0.3, fontVariantNumeric: "lining-nums tabular-nums" }}>
               {date ? toDisplay(date) : t.datePicker.datePlaceholder}
             </p>
           </div>
@@ -85,15 +84,15 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
 
       {/* Nights summary */}
       {nightsCount > 0 && (
-        <div className="flex items-center gap-4 px-5 py-4 border-l-2" style={{ borderColor: "var(--gold)", background: "var(--gold-tint)" }}>
-          <div className="text-3xl font-light" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)" }}>
+        <div className="flex items-center gap-4 rounded-[1.85rem] border px-5 py-4" style={{ borderColor: "rgba(200, 126, 66, 0.34)", background: "var(--gold-tint)" }}>
+          <div className="text-[3.5rem] font-light" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)", fontVariantNumeric: "lining-nums tabular-nums" }}>
             {nightsCount}
           </div>
           <div>
-            <p className="text-sm" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+            <p className="text-[1.02rem]" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
               {nightsCount === 1 ? t.datePicker.night : t.datePicker.nights}
             </p>
-            <p className="text-xs opacity-50" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+            <p className="text-[0.9rem] opacity-50" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
               {fromDate?.toLocaleDateString(locale, { month: "short", day: "numeric" })} →{" "}
               {toDate?.toLocaleDateString(locale, { month: "short", day: "numeric", year: "numeric" })}
             </p>
@@ -126,7 +125,7 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
           padding: 0 0.5rem 1rem;
         }
         .saros-calendar .rdp-caption_label {
-          font-size: 0.85rem;
+          font-size: 1.18rem;
           letter-spacing: 0.15em;
           text-transform: uppercase;
           color: var(--cream);
@@ -139,8 +138,8 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
         }
         .saros-calendar .rdp-button_previous,
         .saros-calendar .rdp-button_next {
-          width: 2rem;
-          height: 2rem;
+          width: 2.9rem;
+          height: 2.9rem;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -150,6 +149,7 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
           cursor: pointer;
           transition: all 0.2s;
           opacity: 0.7;
+          border-radius: 999px;
         }
         .saros-calendar .rdp-button_previous:hover,
         .saros-calendar .rdp-button_next:hover {
@@ -164,7 +164,7 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
         }
         .saros-calendar .rdp-weekday {
           text-align: center;
-          font-size: 0.7rem;
+          font-size: 1rem;
           letter-spacing: 0.1em;
           text-transform: uppercase;
           padding: 0.5rem 0;
@@ -187,14 +187,15 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
           display: flex;
           align-items: center;
           justify-content: center;
-          font-size: 0.8rem;
+          font-size: 1.3rem;
           color: var(--cream);
           background: transparent;
           border: none;
           cursor: pointer;
           transition: all 0.15s;
-          border-radius: 0;
+          border-radius: 1.5rem;
           font-family: var(--font-raleway);
+          font-variant-numeric: lining-nums tabular-nums;
         }
         .saros-calendar .rdp-day_button:hover:not(:disabled) {
           background: var(--gold-tint);
@@ -217,13 +218,13 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
         .saros-calendar .rdp-range_start .rdp-day_button {
           background: var(--gold) !important;
           color: #fff !important;
-          border-radius: 0;
+          border-radius: 1.5rem;
         }
         /* Range end */
         .saros-calendar .rdp-range_end .rdp-day_button {
           background: var(--gold) !important;
           color: #fff !important;
-          border-radius: 0;
+          border-radius: 1.5rem;
         }
         /* Middle of range */
         .saros-calendar .rdp-range_middle .rdp-day_button {
@@ -237,7 +238,7 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
         }
       `}</style>
 
-      <div className="border" style={{ borderColor: "var(--border-color)", background: "var(--dark-mid)", padding: "1.25rem" }}>
+      <div className="rounded-[2rem] border" style={{ borderColor: "var(--border-color)", background: "var(--dark-mid)", padding: "1.5rem" }}>
         <DayPicker
           className="saros-calendar"
           mode="range"
@@ -255,21 +256,21 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
           { label: t.datePicker.children, value: children, field: "children", min: 0, max: 4 },
         ].map(({ label, value, field, min, max }) => (
           <div key={field}>
-            <label className="block text-xs tracking-[0.2em] uppercase mb-3 opacity-70" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+            <label className="block text-[0.9rem] tracking-[0.18em] uppercase mb-3 opacity-70" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
               {label}
             </label>
-            <div className="flex items-center border" style={{ borderColor: "var(--border-color)" }}>
+            <div className="flex items-center overflow-hidden rounded-full border" style={{ borderColor: "var(--border-color)" }}>
               <button
                 type="button"
                 onClick={() => onChange(field, Math.max(min, value - 1))}
-                className="w-12 h-12 flex items-center justify-center text-xl transition-colors duration-200 hover:bg-black/5"
+                className="flex h-[4.4rem] w-[4.4rem] items-center justify-center text-[2.1rem] transition-colors duration-200 hover:bg-black/5"
                 style={{ color: "var(--gold)", touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
               >−</button>
-              <span className="flex-1 text-center text-base" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>{value}</span>
+              <span className="flex-1 text-center text-[1.32rem]" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>{value}</span>
               <button
                 type="button"
                 onClick={() => onChange(field, Math.min(max, value + 1))}
-                className="w-12 h-12 flex items-center justify-center text-xl transition-colors duration-200 hover:bg-black/5"
+                className="flex h-[4.4rem] w-[4.4rem] items-center justify-center text-[2.1rem] transition-colors duration-200 hover:bg-black/5"
                 style={{ color: "var(--gold)", touchAction: "manipulation", WebkitTapHighlightColor: "transparent" }}
               >+</button>
             </div>

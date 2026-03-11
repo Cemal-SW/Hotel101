@@ -24,15 +24,15 @@ export default function RoomCard({ room, isSelected, onSelect, nights, perNightL
   return (
     <div
       onClick={() => onSelect(room.id)}
-      className="group cursor-pointer border transition-all duration-400 overflow-hidden"
+      className="group cursor-pointer overflow-hidden rounded-[2rem] border transition-all duration-400"
       style={{
         borderColor: isSelected ? "var(--gold)" : "var(--border-color)",
         background: isSelected ? "var(--gold-tint)" : "var(--dark-mid)",
       }}
     >
-      <div className="relative h-52 overflow-hidden">
+      <div className="relative h-52 overflow-hidden rounded-[1.55rem]">
         <Image src={room.image} alt={room.name} fill className="object-cover transition-transform duration-700 group-hover:scale-105" sizes="(max-width: 768px) 100vw, 50vw" />
-        <div className="absolute top-3 left-3 px-2.5 py-1 text-xs tracking-wider uppercase" style={{ background: "var(--gold)", color: "#fff", fontFamily: "var(--font-raleway)" }}>
+        <div className="absolute top-3 left-3 px-4 py-2 text-[1.05rem] tracking-[0.1em] uppercase" style={{ background: "var(--gold)", color: "#fff", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
           {room.size}
         </div>
         {isSelected && (
@@ -46,22 +46,22 @@ export default function RoomCard({ room, isSelected, onSelect, nights, perNightL
 
       <div className="p-6">
         <div className="flex items-start justify-between mb-3">
-          <h3 className="text-xl font-light italic" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+          <h3 className="text-[1.7rem] font-light italic tracking-[-0.03em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
             {room.name}
           </h3>
           <div className="text-right">
-            <div className="text-2xl font-light" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)" }}>${room.pricePerNight}</div>
-            <div className="text-xs opacity-50" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>{perNightLabel}</div>
+            <div className="text-[2.8rem] font-light" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)", fontVariantNumeric: "lining-nums tabular-nums" }}>${room.pricePerNight}</div>
+            <div className="text-[0.88rem] opacity-50" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>{perNightLabel}</div>
           </div>
         </div>
 
-        <p className="text-sm leading-6 mb-4 opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+        <p className="mb-4 text-[1.05rem] opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
           {room.description}
         </p>
 
         <div className="flex flex-wrap gap-2 mb-5">
           {room.features.map((f) => (
-            <span key={f} className="text-xs px-2.5 py-1 border" style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+            <span key={f} className="rounded-full text-[0.86rem] px-3 py-1.5 border" style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
               {f}
             </span>
           ))}
@@ -69,10 +69,10 @@ export default function RoomCard({ room, isSelected, onSelect, nights, perNightL
 
         {nights > 0 && (
           <div className="flex justify-between items-center pt-4 border-t" style={{ borderColor: "var(--border-color)" }}>
-            <span className="text-xs opacity-50 tracking-wide" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+            <span className="text-[1.08rem] opacity-50 tracking-wide" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
               {nights} {nightsTotalLabel}
             </span>
-            <span className="text-lg font-light" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)" }}>
+            <span className="text-[2rem] font-light" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)", fontVariantNumeric: "lining-nums tabular-nums" }}>
               ${room.pricePerNight * nights}
             </span>
           </div>

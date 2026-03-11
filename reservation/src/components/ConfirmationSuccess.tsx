@@ -19,29 +19,29 @@ export default function ConfirmationSuccess({ firstName, email, promotionalUrl }
         </svg>
       </div>
 
-      <p className="text-sm tracking-[0.3em] uppercase mb-4" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+      <p className="text-[0.95rem] tracking-[0.24em] uppercase mb-4" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
         {t.confirmation.tag}
       </p>
 
-      <h2 className="text-5xl font-light italic mb-6" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+      <h2 className="text-[3.6rem] md:text-[4.7rem] font-light italic mb-6 tracking-[-0.045em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
         {t.confirmation.title}, {firstName}!
       </h2>
 
-      <p className="max-w-md text-base leading-8 opacity-70 mb-4" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+      <p className="max-w-xl text-[1.08rem] opacity-70 mb-4" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
         {t.confirmation.p1}{" "}
         <strong className="opacity-90">{email}</strong>
         {t.confirmation.p1b && <> {t.confirmation.p1b}</>}.
       </p>
 
-      <p className="max-w-md text-sm leading-7 opacity-50 mb-12" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+      <p className="max-w-xl text-[1.04rem] opacity-50 mb-12" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
         {t.confirmation.p2}
       </p>
 
       <div className="flex flex-col sm:flex-row gap-4">
-        <a href={promotionalUrl} className="px-10 py-4 text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:opacity-90" style={{ background: "var(--gold)", color: "#fff", fontFamily: "var(--font-raleway)" }}>
+        <a href={promotionalUrl} className="rounded-full px-10 py-4 text-[0.96rem] tracking-[0.18em] uppercase transition-all duration-300 hover:opacity-90" style={{ background: "var(--gold)", color: "#fff", fontFamily: "var(--font-raleway)" }}>
           {t.confirmation.backBtn}
         </a>
-        <a href="mailto:info@sarosvadi.com" className="px-10 py-4 border text-sm tracking-[0.2em] uppercase transition-all duration-300 hover:bg-black/5" style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+        <a href="mailto:info@sarosvadi.com" className="rounded-full px-10 py-4 border text-[0.96rem] tracking-[0.18em] uppercase transition-all duration-300 hover:bg-black/5" style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
           {t.confirmation.contactBtn}
         </a>
       </div>

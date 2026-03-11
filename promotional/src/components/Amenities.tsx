@@ -27,6 +27,8 @@ export default function Amenities() {
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   const dragStartXRef = useRef(0);
   const dragStartScrollLeftRef = useRef(0);
 
@@ -36,7 +38,7 @@ export default function Amenities() {
 
     let frameId = 0;
 
-    const updateActiveCard = () => {
+    const updateTrackState = () => {
       const cards = Array.from(
         track.querySelectorAll<HTMLElement>("[data-service-card='true']")
       );
@@ -60,11 +62,16 @@ export default function Amenities() {
       setActiveIndex((current) =>
         current === closestIndex ? current : closestIndex
       );
+
+      const maxScrollLeft = Math.max(track.scrollWidth - track.clientWidth, 0);
+      const threshold = 12;
+      setCanScrollLeft(track.scrollLeft > threshold);
+      setCanScrollRight(track.scrollLeft < maxScrollLeft - threshold);
     };
 
     const requestUpdate = () => {
       cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(updateActiveCard);
+      frameId = requestAnimationFrame(updateTrackState);
     };
 
     requestUpdate();
@@ -89,6 +96,16 @@ export default function Amenities() {
       left: Math.max(card.offsetLeft - 4, 0),
       behavior: "smooth",
     });
+  };
+
+  const scrollByDirection = (direction: "prev" | "next") => {
+    const lastIndex = t.amenities.items.length - 1;
+    const targetIndex =
+      direction === "prev"
+        ? Math.max(activeIndex - 1, 0)
+        : Math.min(activeIndex + 1, lastIndex);
+
+    scrollToCard(targetIndex);
   };
 
   const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -127,13 +144,13 @@ export default function Amenities() {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
-          <span className="text-xs tracking-[0.3em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+          <span className="text-[0.92rem] tracking-[0.24em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
             {t.amenities.tag}
           </span>
         </div>
 
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <h2 className="text-5xl md:text-6xl font-light italic leading-tight" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+          <h2 className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
             {t.amenities.title1}{" "}
             <br />
             <span style={{ color: "var(--gold)" }}>{t.amenities.title2}</span>
@@ -143,6 +160,50 @@ export default function Amenities() {
         <div className="services-slider relative">
           <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 md:w-12" style={{ background: "linear-gradient(90deg, var(--dark), transparent)" }} />
           <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 md:w-12" style={{ background: "linear-gradient(270deg, var(--dark), transparent)" }} />
+
+          <button
+            type="button"
+            aria-label="Onceki hizmet karti"
+            onClick={() => scrollByDirection("prev")}
+            className={`absolute left-2 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border transition-all duration-500 md:flex ${
+              canScrollLeft
+                ? "translate-x-0 opacity-100"
+                : "-translate-x-4 opacity-0 pointer-events-none"
+            }`}
+            style={{
+              borderColor: "var(--border-strong)",
+              background: "rgba(20, 16, 12, 0.48)",
+              color: "var(--cream)",
+              backdropFilter: "blur(14px)",
+              boxShadow: "0 14px 40px rgba(0,0,0,0.18)",
+            }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m14.5 5.5-6 6 6 6" />
+            </svg>
+          </button>
+
+          <button
+            type="button"
+            aria-label="Sonraki hizmet karti"
+            onClick={() => scrollByDirection("next")}
+            className={`absolute right-2 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border transition-all duration-500 md:flex ${
+              canScrollRight
+                ? "translate-x-0 opacity-100"
+                : "translate-x-4 opacity-0 pointer-events-none"
+            }`}
+            style={{
+              borderColor: "var(--border-strong)",
+              background: "rgba(20, 16, 12, 0.48)",
+              color: "var(--cream)",
+              backdropFilter: "blur(14px)",
+              boxShadow: "0 14px 40px rgba(0,0,0,0.18)",
+            }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m9.5 5.5 6 6-6 6" />
+            </svg>
+          </button>
 
           <div
             ref={trackRef}
@@ -202,10 +263,10 @@ export default function Amenities() {
                 </div>
 
                 <div className="p-7 md:p-8">
-                  <h3 className="mb-3 text-[1.75rem] md:text-[2rem] font-light" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+                  <h3 className="mb-3 text-[1.9rem] md:text-[2.15rem] font-light italic tracking-[-0.03em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
                     {item.title}
                   </h3>
-                  <p className="max-w-[28rem] text-sm leading-7 md:text-[15px]" style={{ color: "var(--cream)", opacity: 0.7, fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+                  <p className="max-w-[30rem]" style={{ color: "var(--cream)", opacity: 0.7, fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
                     {item.description}
                   </p>
                 </div>

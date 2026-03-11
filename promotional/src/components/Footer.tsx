@@ -39,23 +39,23 @@ export default function Footer({ reservationUrl }: FooterProps) {
               <span className="block text-3xl font-bold tracking-widest uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-cormorant)" }}>
                 Saros
               </span>
-              <span className="block text-sm tracking-[0.3em] uppercase" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+              <span className="block text-[1.02rem] tracking-[0.22em] uppercase" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
                 Vadi
               </span>
             </div>
-            <p className="text-sm leading-7 opacity-50 max-w-xs" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+            <p className="text-[1.04rem] leading-[1.85] opacity-60 max-w-sm" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
               {t.footer.tagline}
             </p>
           </div>
 
           <div>
-            <h4 className="text-xs tracking-[0.3em] uppercase mb-6" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+            <h4 className="text-[0.92rem] tracking-[0.24em] uppercase mb-6" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
               {t.footer.nav}
             </h4>
             <ul className="flex flex-col gap-3">
               {navLinks.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-sm opacity-60 hover:opacity-100 transition-opacity duration-300" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+                  <a href={link.href} className="text-[1.04rem] opacity-70 hover:opacity-100 transition-opacity duration-300" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
                     {link.label}
                   </a>
                 </li>
@@ -64,10 +64,10 @@ export default function Footer({ reservationUrl }: FooterProps) {
           </div>
 
           <div>
-            <h4 className="text-xs tracking-[0.3em] uppercase mb-6" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+            <h4 className="text-[0.92rem] tracking-[0.24em] uppercase mb-6" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
               {t.footer.contact}
             </h4>
-            <ul className="flex flex-col gap-3 text-sm opacity-60">
+            <ul className="flex flex-col gap-3 text-[1.04rem] opacity-70 leading-[1.8]">
               {["info@sarosvadi.com", "+90 (555) 101-0000", "Saros Bay, Çanakkale, Türkiye"].map((item) => (
                 <li key={item} style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
                   {item}

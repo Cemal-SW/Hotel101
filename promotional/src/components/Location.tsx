@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
 import { useLanguage } from "./LanguageProvider";
@@ -42,8 +42,8 @@ export default function Location({ reservationUrl }: LocationProps) {
           <div className="flex items-center justify-center gap-4 mb-8">
             <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
             <span
-              className="text-xs tracking-[0.3em] uppercase"
-              style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}
+              className="text-[0.92rem] tracking-[0.24em] uppercase"
+              style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}
             >
               {t.location.tag}
             </span>
@@ -51,7 +51,7 @@ export default function Location({ reservationUrl }: LocationProps) {
           </div>
 
           <h2
-            className="text-5xl md:text-6xl font-light italic leading-tight mb-6"
+            className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] mb-6 tracking-[-0.04em]"
             style={{ color: "#F5EFE7", fontFamily: "var(--font-cormorant)" }}
           >
             {t.location.title}{" "}
@@ -59,7 +59,7 @@ export default function Location({ reservationUrl }: LocationProps) {
           </h2>
 
           <p
-            className="text-base leading-8 md:text-lg mb-12"
+            className="mb-12"
             style={{
               color: "rgba(245,239,231,0.76)",
               fontFamily: "var(--font-raleway)",
@@ -77,7 +77,7 @@ export default function Location({ reservationUrl }: LocationProps) {
             return (
               <article
                 key={card.title}
-                className={`group overflow-hidden border p-2 transition-transform duration-500 hover:-translate-y-1 ${layout.outer}`}
+                className={`group overflow-hidden rounded-[2rem] border p-2 transition-transform duration-500 hover:-translate-y-1 ${layout.outer}`}
                 style={{
                   borderColor: "rgba(245,239,231,0.22)",
                   background: "rgba(24, 18, 14, 0.32)",
@@ -85,7 +85,7 @@ export default function Location({ reservationUrl }: LocationProps) {
                 }}
               >
                 <div
-                  className={`relative overflow-hidden border ${layout.mediaHeight}`}
+                  className={`relative overflow-hidden rounded-[1.45rem] border ${layout.mediaHeight}`}
                   style={{
                     borderColor: "rgba(245,239,231,0.22)",
                     background: cardSurfaces[index % cardSurfaces.length],
@@ -118,13 +118,13 @@ export default function Location({ reservationUrl }: LocationProps) {
 
                 <div className="px-0.5 pb-0.5 pt-4 text-center">
                   <h3
-                    className="mb-2 text-[1.45rem] md:text-[1.7rem] font-light leading-tight"
+                    className="mb-2 text-[1.65rem] md:text-[1.95rem] font-light italic leading-tight tracking-[-0.03em]"
                     style={{ color: "#E6DEC9", fontFamily: "var(--font-cormorant)" }}
                   >
                     {card.title}
                   </h3>
                   <p
-                    className="text-[12px] leading-6 md:text-[13px] md:leading-6"
+                    className="text-[0.98rem]"
                     style={{
                       color: "rgba(245,239,231,0.82)",
                       fontFamily: "var(--font-raleway)",
@@ -142,7 +142,7 @@ export default function Location({ reservationUrl }: LocationProps) {
         <div className="mt-10 flex justify-center">
           <a
             href={reservationUrl}
-            className="px-5 py-2 rounded-full text-sm tracking-[0.12em] uppercase font-medium transition-all duration-300 hover:opacity-90"
+            className="px-7 py-3 rounded-full text-[0.95rem] tracking-[0.12em] uppercase font-medium transition-all duration-300 hover:opacity-90"
             style={{
               background: "var(--gold)",
               color: "#fff",

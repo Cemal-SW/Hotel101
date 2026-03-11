@@ -11,6 +11,7 @@
   --dark: #F7F2EC;
   --dark-mid: #EDE4D6;
   --dark-light: #E6DDD0;
+  --panel-soft: #F6F1EA;
   --font-sans: var(--font-cormorant);
   --border-color: rgba(44, 33, 26, 0.1);
   --border-strong: rgba(44, 33, 26, 0.2);
@@ -28,6 +29,7 @@
   --dark: #2C211A;
   --dark-mid: #3D2E24;
   --dark-light: #4A3628;
+  --panel-soft: #47352A;
   --border-color: rgba(245, 239, 231, 0.12);
   --border-strong: rgba(245, 239, 231, 0.22);
   --nav-bg: rgba(44, 33, 26, 0.95);
@@ -42,6 +44,7 @@
   --color-dark: var(--dark);
   --color-dark-mid: var(--dark-mid);
   --color-dark-light: var(--dark-light);
+  --color-panel-soft: var(--panel-soft);
   --font-sans: var(--font-cormorant);
 }
 
@@ -55,6 +58,47 @@ body {
   font-family: var(--font-sans), Georgia, serif;
   overflow-x: hidden;
   transition: background-color 0.35s ease, color 0.35s ease;
+  font-optical-sizing: auto;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "liga" 1, "kern" 1, "dlig" 1;
+}
+
+main h1,
+main h2,
+main h3,
+main h4,
+footer h1,
+footer h2,
+footer h3,
+footer h4 {
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  font-kerning: normal;
+}
+
+main h1,
+main h2 {
+  line-height: 0.92;
+}
+
+main h3,
+main h4,
+footer h3,
+footer h4 {
+  line-height: 1.02;
+}
+
+main p,
+main li,
+footer p,
+footer li,
+label,
+input,
+textarea,
+select {
+  font-size: clamp(1.06rem, 1.01rem + 0.22vw, 1.16rem);
+  line-height: 1.8;
+  letter-spacing: 0.01em;
 }
 
 ::selection {

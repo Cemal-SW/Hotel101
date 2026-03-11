@@ -29,10 +29,10 @@ export default function RoomSelector({ selectedRoomId, onSelect, nights }: RoomS
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-4xl font-light italic mb-2" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+        <h2 className="text-[3rem] md:text-[3.6rem] font-light italic mb-2 tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
           {t.roomSelector.title}
         </h2>
-        <p className="text-sm opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+        <p className="opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
           {t.roomSelector.subtitle}
         </p>
       </div>
