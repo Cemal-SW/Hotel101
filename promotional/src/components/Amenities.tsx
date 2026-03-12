@@ -154,57 +154,53 @@ export default function Amenities() {
   return (
     <section id="amenities" className="py-28 px-6 lg:px-12 overflow-hidden" style={{ background: "var(--dark)" }}>
       <div className="max-w-7xl mx-auto">
-        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:gap-8 xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
-          <div className="lg:pr-1">
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
-              <span className="text-[0.92rem] tracking-[0.24em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
-                {t.amenities.tag}
+
+        {/* Section header */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
+          <span className="text-[0.92rem] tracking-[0.24em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
+            {t.amenities.tag}
+          </span>
+        </div>
+
+        <div className="mb-10">
+          <h2 className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+            {t.amenities.title1}{" "}
+            <span style={{ color: "var(--gold)" }}>{t.amenities.title2}</span>
+          </h2>
+        </div>
+
+        {/* Horizontal category tabs */}
+        <div className="flex items-end gap-0 mb-10 border-b" style={{ borderColor: "var(--border-color)" }}>
+          {t.amenities.categories.map((category, index) => (
+            <button
+              key={category.id}
+              type="button"
+              onClick={() => setActiveCategoryIndex(index)}
+              className="relative px-6 py-4 text-left transition-all duration-300"
+              style={{
+                borderBottom: activeCategoryIndex === index
+                  ? "2px solid var(--gold)"
+                  : "2px solid transparent",
+                marginBottom: "-1px",
+              }}
+            >
+              <span
+                className="text-[1.55rem] md:text-[1.85rem] font-light italic tracking-[-0.03em] transition-colors duration-300"
+                style={{
+                  color: activeCategoryIndex === index ? "var(--gold)" : "var(--cream)",
+                  opacity: activeCategoryIndex === index ? 1 : 0.45,
+                  fontFamily: "var(--font-cormorant)",
+                }}
+              >
+                {category.title}
               </span>
-            </div>
+            </button>
+          ))}
+        </div>
 
-            <div className="mb-12 lg:mb-14">
-              <h2 className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
-                {t.amenities.title1}{" "}
-                <br />
-                <span style={{ color: "var(--gold)" }}>{t.amenities.title2}</span>
-              </h2>
-            </div>
-
-            <div className="space-y-4">
-              {t.amenities.categories.map((category, index) => (
-                <button
-                  key={category.id}
-                  type="button"
-                  onClick={() => setActiveCategoryIndex(index)}
-                  className="w-full rounded-[2rem] border px-6 py-5 text-left transition-all duration-500"
-                  style={{
-                    borderColor:
-                      activeCategoryIndex === index
-                        ? "var(--gold)"
-                        : "var(--border-color)",
-                    background:
-                      activeCategoryIndex === index
-                        ? "var(--gold-tint)"
-                        : "transparent",
-                    boxShadow:
-                      activeCategoryIndex === index
-                        ? "0 18px 50px rgba(168,92,58,0.12)"
-                        : "none",
-                  }}
-                >
-                  <h3
-                    className="text-[1.8rem] md:text-[2.15rem] font-light italic tracking-[-0.03em]"
-                    style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}
-                  >
-                    {category.title}
-                  </h3>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="services-slider relative w-full self-start lg:max-w-[38rem] lg:justify-self-center lg:pt-1">
+        {/* Full-width slider */}
+        <div className="services-slider relative w-full">
             <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 md:w-10" style={{ background: "linear-gradient(90deg, var(--dark), transparent)" }} />
             <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 md:w-10" style={{ background: "linear-gradient(270deg, var(--dark), transparent)" }} />
 
@@ -219,10 +215,8 @@ export default function Amenities() {
               }`}
               style={{
                 borderColor: "var(--border-strong)",
-                background: "rgba(20, 16, 12, 0.48)",
+                background: "var(--dark-mid)",
                 color: "var(--cream)",
-                backdropFilter: "blur(14px)",
-                boxShadow: "0 14px 40px rgba(0,0,0,0.18)",
               }}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
@@ -241,10 +235,8 @@ export default function Amenities() {
               }`}
               style={{
                 borderColor: "var(--border-strong)",
-                background: "rgba(20, 16, 12, 0.48)",
+                background: "var(--dark-mid)",
                 color: "var(--cream)",
-                backdropFilter: "blur(14px)",
-                boxShadow: "0 14px 40px rgba(0,0,0,0.18)",
               }}
             >
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
@@ -265,7 +257,7 @@ export default function Amenities() {
                 <article
                   key={`${activeCategory.id}-${item.title}`}
                   data-service-card="true"
-                  className="service-card group snap-start shrink-0 basis-[66vw] sm:basis-[21rem] md:basis-[22rem] lg:basis-[calc(100%-7.5rem)] xl:basis-[calc(100%-8rem)] overflow-hidden rounded-[2rem]"
+                  className="service-card group snap-start shrink-0 basis-[80vw] sm:basis-[26rem] md:basis-[30rem] lg:basis-[38rem] overflow-hidden rounded-[2rem]"
                   style={{ background: "var(--dark-mid)" }}
                 >
                   <div
@@ -292,9 +284,9 @@ export default function Amenities() {
                       {String(index + 1).padStart(2, "0")}
                     </div>
                     <div
-                      className="absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full backdrop-blur-md"
+                      className="absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full"
                       style={{
-                        background: "rgba(20, 16, 12, 0.2)",
+                        background: "rgba(20, 16, 12, 0.35)",
                         border: "1px solid rgba(255,255,255,0.18)",
                         color: "#fff",
                       }}
@@ -337,7 +329,6 @@ export default function Amenities() {
                 />
               ))}
             </div>
-          </div>
         </div>
       </div>
     </section>
