@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useLanguage } from "./LanguageProvider";
 
 interface FooterProps {
@@ -9,11 +11,14 @@ interface FooterProps {
 export default function Footer({ reservationUrl }: FooterProps) {
   const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
   const navLinks = [
-    { label: t.nav.rooms, href: "#rooms" },
-    { label: t.nav.amenities, href: "#amenities" },
-    { label: t.nav.location, href: "#location" },
+    { label: t.nav.rooms, href: "/odalar" },
+    { label: t.nav.gallery, href: "/galeri" },
+    { label: t.nav.amenities, href: isHomePage ? "#amenities" : "/#amenities" },
+    { label: t.nav.location, href: isHomePage ? "#location" : "/#location" },
     { label: t.nav.bookNow, href: reservationUrl },
   ];
 
@@ -55,9 +60,15 @@ export default function Footer({ reservationUrl }: FooterProps) {
             <ul className="flex flex-col gap-3">
               {navLinks.map((link) => (
                 <li key={link.label}>
-                  <a href={link.href} className="text-[1.04rem] opacity-70 hover:opacity-100 transition-opacity duration-300" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
-                    {link.label}
-                  </a>
+                  {link.href.startsWith("http") ? (
+                    <a href={link.href} className="text-[1.04rem] opacity-70 hover:opacity-100 transition-opacity duration-300" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+                      {link.label}
+                    </a>
+                  ) : (
+                    <Link href={link.href} className="text-[1.04rem] opacity-70 hover:opacity-100 transition-opacity duration-300" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+                      {link.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>

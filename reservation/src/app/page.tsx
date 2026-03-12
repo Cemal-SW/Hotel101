@@ -5,35 +5,14 @@ import StepIndicator from "@/components/StepIndicator";
 import DateRangePicker from "@/components/DateRangePicker";
 import RoomSelector from "@/components/RoomSelector";
 import GuestForm, { AdultGuestDetails, ChildGuestDetails, GuestInfo, createAdultGuest, createChildGuest } from "@/components/GuestForm";
+import PaymentForm, { PaymentInfo } from "@/components/PaymentForm";
 import BookingSummary from "@/components/BookingSummary";
 import ConfirmationSuccess from "@/components/ConfirmationSuccess";
 import ThemeToggle from "@/components/ThemeToggle";
 import LanguageToggle from "@/components/LanguageToggle";
 import { useLanguage } from "@/components/LanguageProvider";
 import { Room } from "@/components/RoomCard";
-
-const BASE_PRICES: Record<string, number> = {
-  "junior-suite-king": 280,
-  "junior-suite-twin": 260,
-  "superior-king":     210,
-  "deluxe-suite":      480,
-};
-
-const BASE_SIZES: Record<string, string> = {
-  "junior-suite-king": "35 m²",
-  "junior-suite-twin": "35 m²",
-  "superior-king":     "28 m²",
-  "deluxe-suite":      "55 m²",
-};
-
-const BASE_IMAGES: Record<string, string> = {
-  "junior-suite-king": "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
-  "junior-suite-twin": "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80",
-  "superior-king":     "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80",
-  "deluxe-suite":      "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80",
-};
-
-const ROOM_IDS = ["junior-suite-king", "junior-suite-twin", "superior-king", "deluxe-suite"];
+import { buildReservationPlans, reservationRoomIds, reservationRooms } from "@/data/rooms";
 
 const PROMOTIONAL_URL = process.env.NEXT_PUBLIC_PROMOTIONAL_URL || "http://localhost:3000";
 
@@ -98,6 +77,12 @@ export default function ReservationPage() {
     adults: [createAdultGuest()],
     children: [],
   });
+  const [paymentInfo, setPaymentInfo] = useState<PaymentInfo>({
+    cardholderName: "",
+    cardNumber: "",
+    expiryDate: "",
+    cvv: "",
+  });
   const hasMountedRef = useRef(false);
 
   const nights = useMemo(() => {
@@ -107,27 +92,100 @@ export default function ReservationPage() {
     ));
   }, [stayDetails.checkIn, stayDetails.checkOut]);
 
+  const totalGuests = stayDetails.adults + stayDetails.children;
+
+  const roomPlans = useMemo(() => {
+    const roomNameMap = new Map(
+      reservationRoomIds.map((id, index) => [id, t.roomSelector.items[index]])
+    );
+
+    const mappedPlans = buildReservationPlans(stayDetails.adults, stayDetails.children).map((plan) => {
+      const selections = plan.rooms.map((entry) => {
+        const roomBase = reservationRooms.find((room) => room.id === entry.roomId);
+        const translation = roomNameMap.get(entry.roomId);
+
+        return {
+          ...entry,
+          roomBase,
+          translation,
+        };
+      });
+
+      const coverRoom = selections.find((entry) => entry.roomBase?.id === plan.coverRoomId)?.roomBase;
+      const roomLabel = selections
+        .map((entry) => `${entry.quantity} x ${entry.translation?.name ?? entry.roomId}`)
+        .join(" + ");
+      const featureList = selections.map(
+        (entry) => `${entry.quantity} x ${entry.translation?.name ?? entry.roomId}`
+      );
+
+      return {
+        id: plan.id,
+        name:
+          selections.length > 1
+            ? t.roomSelector.comboTitle.replace("{count}", String(plan.totalRooms))
+            : selections[0]?.translation?.name ?? t.roomSelector.title,
+        description:
+          selections.length > 1
+            ? t.roomSelector.comboSubtitle.replace("{rooms}", roomLabel)
+            : selections[0]?.translation?.description ?? "",
+        features: featureList,
+        pricePerNight: plan.totalPricePerNight,
+        size: `${plan.totalCapacity} ${t.summary.guests}`,
+        image: coverRoom?.image ?? reservationRooms[0].image,
+        capacity: plan.totalCapacity,
+        roomCount: plan.totalRooms,
+        bedConfiguration: selections
+          .map((entry) => `${entry.quantity} x ${entry.roomBase?.bedConfiguration ?? ""}`)
+          .join(" + "),
+        basePricePerNight: plan.basePricePerNight,
+        adultSupplementPerNight: plan.adultSupplementPerNight,
+        childSupplementPerNight: plan.childSupplementPerNight,
+        extraAdults: plan.extraAdults,
+        extraChildren: plan.extraChildren,
+      } satisfies Room;
+    });
+
+    const cheapestPlan = mappedPlans[0];
+    const fewestRoomsPlan = [...mappedPlans].sort((a, b) => {
+      if (a.roomCount !== b.roomCount) return a.roomCount - b.roomCount;
+      return a.pricePerNight - b.pricePerNight;
+    })[0];
+    const mostComfortablePlan = [...mappedPlans].sort((a, b) => {
+      const comfortA = a.capacity - totalGuests;
+      const comfortB = b.capacity - totalGuests;
+      if (comfortB !== comfortA) return comfortB - comfortA;
+      return a.pricePerNight - b.pricePerNight;
+    })[0];
+
+    return mappedPlans.map((plan) => {
+      let recommendationTag: string | undefined;
+
+      if (plan.id === cheapestPlan?.id) {
+        recommendationTag = t.roomSelector.cheapestTag;
+      } else if (plan.id === fewestRoomsPlan?.id) {
+        recommendationTag = t.roomSelector.fewestRoomsTag;
+      } else if (plan.id === mostComfortablePlan?.id) {
+        recommendationTag = t.roomSelector.comfortTag;
+      }
+
+      return {
+        ...plan,
+        recommendationTag,
+      };
+    });
+  }, [stayDetails.adults, stayDetails.children, t, totalGuests]);
+
   // Derive the selected room from current translations so it's always up-to-date
   const selectedRoom = useMemo((): Room | undefined => {
     if (!selectedRoomId) return undefined;
-    const idx = ROOM_IDS.indexOf(selectedRoomId);
-    if (idx === -1) return undefined;
-    return {
-      id: selectedRoomId,
-      name: t.roomSelector.items[idx].name,
-      description: t.roomSelector.items[idx].description,
-      features: [...t.roomSelector.items[idx].features],
-      pricePerNight: BASE_PRICES[selectedRoomId],
-      size: BASE_SIZES[selectedRoomId],
-      image: BASE_IMAGES[selectedRoomId],
-      maxGuests: selectedRoomId === "deluxe-suite" ? 4 : 2,
-    };
-  }, [selectedRoomId, t]);
+    return roomPlans.find((room) => room.id === selectedRoomId);
+  }, [selectedRoomId, roomPlans]);
 
   const childBirthDateBounds = useMemo(() => getChildBirthDateBounds(stayDetails.checkIn), [stayDetails.checkIn]);
 
   const canProceedStep1 = !!(stayDetails.checkIn && stayDetails.checkOut && nights > 0);
-  const canProceedStep2 = !!selectedRoomId;
+  const canProceedStep2 = !!(selectedRoom && selectedRoom.capacity >= totalGuests);
   const canProceedStep3 = !!(
     guestInfo.firstName &&
     guestInfo.lastName &&
@@ -140,11 +198,18 @@ export default function ReservationPage() {
       (child) => child.firstName && child.lastName && isValidChildBirthDate(child.birthDate, stayDetails.checkIn)
     )
   );
+  const canProceedStep4 = !!(
+    paymentInfo.cardholderName.trim() &&
+    paymentInfo.cardNumber.replace(/\s/g, "").length === 16 &&
+    /^\d{2}\/\d{2}$/.test(paymentInfo.expiryDate) &&
+    paymentInfo.cvv.length >= 3
+  );
 
   const canProceed =
     currentStep === 1 ? canProceedStep1 :
     currentStep === 2 ? canProceedStep2 :
     currentStep === 3 ? canProceedStep3 :
+    currentStep === 4 ? canProceedStep4 :
     true;
 
   const handleStayDetailsChange = (field: string, value: string | number) => {
@@ -185,7 +250,11 @@ export default function ReservationPage() {
     }));
   };
 
-  const handleNext = () => { if (currentStep < 4) setCurrentStep(s => s + 1); };
+  const handlePaymentChange = (field: keyof PaymentInfo, value: string) => {
+    setPaymentInfo((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleNext = () => { if (currentStep < 5) setCurrentStep(s => s + 1); };
   const handleBack = () => { if (currentStep > 1) setCurrentStep(s => s - 1); };
 
   const steps = [...t.page.steps];
@@ -198,6 +267,12 @@ export default function ReservationPage() {
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentStep]);
+
+  useEffect(() => {
+    if (selectedRoomId && !selectedRoom) {
+      setSelectedRoomId("");
+    }
+  }, [selectedRoom, selectedRoomId]);
 
   if (confirmed) {
     return (
@@ -259,7 +334,7 @@ export default function ReservationPage() {
               checkIn={stayDetails.checkIn}
               checkOut={stayDetails.checkOut}
               adults={stayDetails.adults}
-              children={stayDetails.children}
+              childCount={stayDetails.children}
               onChange={handleStayDetailsChange}
             />
           )}
@@ -268,6 +343,8 @@ export default function ReservationPage() {
               selectedRoomId={selectedRoomId}
               onSelect={setSelectedRoomId}
               nights={nights}
+              rooms={roomPlans}
+              totalGuests={totalGuests}
             />
           )}
           {currentStep === 3 && (
@@ -281,14 +358,22 @@ export default function ReservationPage() {
             />
           )}
           {currentStep === 4 && (
+            <PaymentForm
+              paymentInfo={paymentInfo}
+              onChange={handlePaymentChange}
+            />
+          )}
+          {currentStep === 5 && (
             <BookingSummary
               checkIn={stayDetails.checkIn}
               checkOut={stayDetails.checkOut}
               adults={stayDetails.adults}
-              children={stayDetails.children}
+              childCount={stayDetails.children}
               room={selectedRoom}
               guestInfo={guestInfo}
+              paymentInfo={paymentInfo}
               nights={nights}
+              totalGuests={totalGuests}
             />
           )}
         </div>
@@ -316,7 +401,7 @@ export default function ReservationPage() {
             {t.nav.back}
           </button>
 
-          {currentStep < 4 ? (
+          {currentStep < 5 ? (
             <button
               type="button"
               onClick={canProceed ? handleNext : undefined}

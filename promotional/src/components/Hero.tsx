@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useLanguage } from "./LanguageProvider";
 
 interface HeroProps {
@@ -10,7 +11,7 @@ export default function Hero({ reservationUrl }: HeroProps) {
   const { t } = useLanguage();
 
   return (
-    <section className="relative h-screen min-h-[700px] flex items-center justify-center overflow-hidden">
+    <section className="relative flex h-[100svh] min-h-[560px] items-center justify-center overflow-hidden pt-16 sm:min-h-[600px] sm:pt-[4.5rem] md:pt-20 lg:min-h-[680px] lg:pt-[5.5rem] xl:min-h-[700px] xl:pt-20">
       <video
         autoPlay
         muted
@@ -31,16 +32,9 @@ export default function Hero({ reservationUrl }: HeroProps) {
         }}
       />
 
-      <div className="absolute top-28 left-1/2 -translate-x-1/2">
-        <div
-          className="w-px h-16"
-          style={{ background: "linear-gradient(to bottom, transparent, var(--gold))" }}
-        />
-      </div>
-
-      <div className="relative z-10 text-center px-6 flex flex-col items-center">
+      <div className="relative z-10 flex flex-col items-center px-6 text-center lg:-translate-y-6 xl:-translate-y-8">
         <p
-          className="mb-8 rounded-full px-3.5 py-1.5 text-[11px] tracking-[0.44em] uppercase"
+          className="mb-5 rounded-full px-3.5 py-1.5 text-[11px] tracking-[0.44em] uppercase sm:mb-6 lg:mb-8"
           style={{
             color: "var(--gold)",
             fontFamily: "var(--font-raleway)",
@@ -53,22 +47,22 @@ export default function Hero({ reservationUrl }: HeroProps) {
         </p>
 
         <h1
-          className="font-light italic leading-none mb-1 tracking-[-0.045em]"
+          className="mb-1 font-light italic leading-none tracking-[-0.045em]"
           style={{
             color: "#FFFFFF",
             fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(5.4rem, 14.8vw, 10.8rem)",
+            fontSize: "clamp(4.4rem, 11.5vw, 10.8rem)",
             textShadow: "0 2px 40px rgba(0,0,0,0.8), 0 0 80px rgba(0,0,0,0.5)",
           }}
         >
           Saros
         </h1>
         <h2
-          className="font-bold tracking-[0.18em] uppercase leading-none mb-10"
+          className="mb-7 font-bold uppercase leading-none tracking-[0.18em] sm:mb-8 lg:mb-10"
           style={{
             color: "var(--gold)",
             fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(2.8rem, 7.6vw, 5.9rem)",
+            fontSize: "clamp(2.3rem, 5.7vw, 5.9rem)",
             textShadow: "0 2px 30px rgba(0,0,0,0.9), 0 0 60px rgba(0,0,0,0.6)",
           }}
         >
@@ -76,11 +70,11 @@ export default function Hero({ reservationUrl }: HeroProps) {
         </h2>
 
         <p
-          className="max-w-[44rem] text-center font-light italic leading-tight mb-12"
+          className="mb-8 max-w-[44rem] text-center font-light italic leading-tight sm:mb-10 lg:mb-12"
           style={{
             color: "#FFFFFF",
             fontFamily: "var(--font-cormorant)",
-            fontSize: "clamp(1.45rem, 2.8vw, 2.15rem)",
+            fontSize: "clamp(1.2rem, 2.1vw, 2.15rem)",
             textShadow: "0 2px 24px rgba(0,0,0,0.75), 0 0 40px rgba(0,0,0,0.35)",
           }}
         >
@@ -88,10 +82,8 @@ export default function Hero({ reservationUrl }: HeroProps) {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4">
-          <button
-            onClick={() =>
-              document.getElementById("rooms")?.scrollIntoView({ behavior: "smooth" })
-            }
+          <Link
+            href="/odalar"
             className="rounded-full px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:opacity-90"
             style={{
               background: "var(--gold)",
@@ -101,7 +93,7 @@ export default function Hero({ reservationUrl }: HeroProps) {
             }}
           >
             {t.hero.exploreRooms}
-          </button>
+          </Link>
           <a
             href={reservationUrl}
             className="rounded-full px-10 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300"

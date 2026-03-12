@@ -15,7 +15,7 @@ export default function Home() {
       <main>
         <Hero reservationUrl={RESERVATION_URL} />
         <Welcome />
-        <Rooms reservationUrl={RESERVATION_URL} />
+        <Rooms />
         <Amenities />
         <Location reservationUrl={RESERVATION_URL} />
       </main>

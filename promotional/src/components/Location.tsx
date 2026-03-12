@@ -10,12 +10,11 @@ const cardLayouts = [
   { outer: "md:-translate-y-3", mediaHeight: "h-[11.5rem] md:h-[13.5rem]" },
 ] as const;
 
-const cardSurfaces = [
-  "linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.02)), radial-gradient(circle at 28% 26%, rgba(255,255,255,0.28), transparent 22%), linear-gradient(135deg, #7a9bb3 0%, #b4c9d7 48%, #f0e5d4 100%)",
-  "linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), radial-gradient(circle at 74% 28%, rgba(255,255,255,0.22), transparent 20%), linear-gradient(135deg, #5a3926 0%, #ab7a4d 52%, #edd1ac 100%)",
-  "linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), radial-gradient(circle at 22% 24%, rgba(255,255,255,0.22), transparent 18%), linear-gradient(135deg, #31413b 0%, #6b8a71 48%, #dde7d7 100%)",
-  "linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), radial-gradient(circle at 72% 22%, rgba(255,255,255,0.2), transparent 18%), linear-gradient(135deg, #244057 0%, #5c7e95 48%, #dce8ef 100%)",
-  "linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02)), radial-gradient(circle at 24% 26%, rgba(255,255,255,0.2), transparent 18%), linear-gradient(135deg, #4b3a30 0%, #8a6a57 48%, #eadbca 100%)",
+const cardImages = [
+  "/media/hotel/hotel-01.jpeg",
+  "/media/hotel/hotel-02.jpeg",
+  "/media/hotel/hotel-03.jpeg",
+  "/media/hotel/hotel-04.jpeg",
 ] as const;
 
 interface LocationProps {
@@ -28,7 +27,7 @@ export default function Location({ reservationUrl }: LocationProps) {
   return (
     <section id="location" className="relative py-32 px-6 lg:px-12 overflow-hidden">
       <Image
-        src="https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=1920&q=80"
+        src="/media/hotel/hotel-16.jpg"
         alt="Saros Vadi location"
         fill
         className="object-cover object-center"
@@ -88,14 +87,21 @@ export default function Location({ reservationUrl }: LocationProps) {
                   className={`relative overflow-hidden rounded-[1.45rem] border ${layout.mediaHeight}`}
                   style={{
                     borderColor: "rgba(245,239,231,0.22)",
-                    background: cardSurfaces[index % cardSurfaces.length],
+                    background: "rgba(24, 18, 14, 0.28)",
                   }}
                 >
+                  <Image
+                    src={cardImages[index % cardImages.length]}
+                    alt={card.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                  />
                   <div
                     className="absolute inset-0"
                     style={{
                       background:
-                        "linear-gradient(180deg, rgba(12,10,9,0.05) 0%, rgba(12,10,9,0.3) 100%)",
+                        "linear-gradient(180deg, rgba(12,10,9,0.08) 0%, rgba(12,10,9,0.42) 100%)",
                     }}
                   />
                   <div

@@ -3,22 +3,28 @@
 import { useLanguage } from "./LanguageProvider";
 import { Room } from "./RoomCard";
 import { GuestInfo } from "./GuestForm";
+import { PaymentInfo } from "./PaymentForm";
 
 interface BookingSummaryProps {
   checkIn: string;
   checkOut: string;
   adults: number;
-  children: number;
+  childCount: number;
   room: Room | undefined;
   guestInfo: GuestInfo;
+  paymentInfo: PaymentInfo;
   nights: number;
+  totalGuests: number;
 }
 
-export default function BookingSummary({ checkIn, checkOut, adults, children, room, guestInfo, nights }: BookingSummaryProps) {
+export default function BookingSummary({ checkIn, checkOut, adults, childCount, room, guestInfo, paymentInfo, nights, totalGuests }: BookingSummaryProps) {
   const { t, language } = useLanguage();
-  const total = room ? room.pricePerNight * nights : 0;
-  const taxes = Math.round(total * 0.12);
-  const grandTotal = total + taxes;
+  const baseTotal = room ? room.basePricePerNight * nights : 0;
+  const adultSupplementTotal = room ? room.adultSupplementPerNight * nights : 0;
+  const childSupplementTotal = room ? room.childSupplementPerNight * nights : 0;
+  const subtotal = baseTotal + adultSupplementTotal + childSupplementTotal;
+  const taxes = Math.round(subtotal * 0.12);
+  const grandTotal = subtotal + taxes;
 
   const locale = language === "tr" ? "tr-TR" : "en-US";
   const formatDate = (date: string) =>
@@ -30,7 +36,8 @@ export default function BookingSummary({ checkIn, checkOut, adults, children, ro
     return gender;
   };
 
-  const guestText = `${adults} ${adults !== 1 ? t.summary.adults : t.summary.adult}${children > 0 ? `, ${children} ${children !== 1 ? t.summary.children : t.summary.child}` : ""}`;
+  const guestText = `${adults} ${adults !== 1 ? t.summary.adults : t.summary.adult}${childCount > 0 ? `, ${childCount} ${childCount !== 1 ? t.summary.children : t.summary.child}` : ""}`;
+  const maskedCardNumber = paymentInfo.cardNumber ? `•••• •••• •••• ${paymentInfo.cardNumber.replace(/\s/g, "").slice(-4)}` : "•••• •••• •••• ••••";
 
   return (
     <div className="space-y-8">
@@ -72,6 +79,20 @@ export default function BookingSummary({ checkIn, checkOut, adults, children, ro
               <div>
                 <p className="text-[1.2rem] italic tracking-[-0.03em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>{room.name}</p>
                 <p className="text-[1.08rem] opacity-50 mt-1" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>{room.size}</p>
+                <div className="mt-3 space-y-1">
+                  <p className="text-[0.98rem] opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+                    {t.summary.selectedRooms}: {room.features.join(" + ")}
+                  </p>
+                  <p className="text-[0.98rem] opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
+                    {t.summary.capacity}: {room.capacity}
+                  </p>
+                  <p className="text-[0.98rem] opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+                    {t.summary.bedConfiguration}: {room.bedConfiguration}
+                  </p>
+                  <p className="text-[0.98rem] opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
+                    {t.summary.selectedGuests}: {totalGuests}
+                  </p>
+                </div>
               </div>
               <p className="text-[1.3rem]" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>${room.pricePerNight} / {language === "tr" ? "gece" : "night"}</p>
             </div>
@@ -127,13 +148,46 @@ export default function BookingSummary({ checkIn, checkOut, adults, children, ro
           )}
         </div>
 
+        <div className="p-6 border-b" style={{ borderColor: "var(--border-color)" }}>
+          <h3 className="mb-4 text-[0.9rem] tracking-[0.2em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
+            {t.summary.payment}
+          </h3>
+          <div className="rounded-[1.5rem] border px-4 py-4" style={{ borderColor: "rgba(200, 126, 66, 0.2)" }}>
+            <p className="text-[1.02rem]" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>
+              {paymentInfo.cardholderName}
+            </p>
+            <p className="mt-1 text-[1.02rem] opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
+              {maskedCardNumber}
+            </p>
+            <p className="mt-1 text-[0.98rem] opacity-50" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
+              {t.summary.cardEnding} {paymentInfo.cardNumber.replace(/\s/g, "").slice(-4) || "0000"} · {paymentInfo.expiryDate || "00/00"}
+            </p>
+          </div>
+        </div>
+
         {/* Pricing */}
         <div className="p-6 space-y-3">
           <h3 className="text-[0.9rem] tracking-[0.2em] uppercase mb-4" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>{t.summary.priceBreakdown}</h3>
           <div className="flex justify-between text-[1.28rem]">
-            <span className="opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>${room?.pricePerNight ?? 0} × {nights} {language === "tr" ? "gece" : "nights"}</span>
-            <span style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>${total}</span>
+            <span className="opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>${room?.basePricePerNight ?? 0} × {nights} {language === "tr" ? "gece" : "nights"}</span>
+            <span style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>${baseTotal}</span>
           </div>
+          {adultSupplementTotal > 0 ? (
+            <div className="flex justify-between text-[1.28rem]">
+              <span className="opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
+                {t.summary.adultSupplement} (${room?.adultSupplementPerNight ?? 0} × {nights})
+              </span>
+              <span style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>${adultSupplementTotal}</span>
+            </div>
+          ) : null}
+          {childSupplementTotal > 0 ? (
+            <div className="flex justify-between text-[1.28rem]">
+              <span className="opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
+                {t.summary.childSupplement} (${room?.childSupplementPerNight ?? 0} × {nights})
+              </span>
+              <span style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>${childSupplementTotal}</span>
+            </div>
+          ) : null}
           <div className="flex justify-between text-[1.28rem]">
             <span className="opacity-60" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}>{t.summary.taxesFees}</span>
             <span style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>${taxes}</span>

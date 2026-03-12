@@ -25,12 +25,15 @@ const cardSurfaces = [
 export default function Amenities() {
   const { t } = useLanguage();
   const trackRef = useRef<HTMLDivElement>(null);
+  const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
   const dragStartXRef = useRef(0);
   const dragStartScrollLeftRef = useRef(0);
+  const activeCategory = t.amenities.categories[activeCategoryIndex];
+  const activeItems = activeCategory.items;
 
   useEffect(() => {
     const track = trackRef.current;
@@ -83,7 +86,16 @@ export default function Amenities() {
       track.removeEventListener("scroll", requestUpdate);
       window.removeEventListener("resize", requestUpdate);
     };
-  }, [t.amenities.items]);
+  }, [activeItems]);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    track.scrollTo({ left: 0, behavior: "auto" });
+    setActiveIndex(0);
+    setCanScrollLeft(false);
+  }, [activeCategoryIndex]);
 
   const scrollToCard = (index: number) => {
     const track = trackRef.current;
@@ -99,7 +111,7 @@ export default function Amenities() {
   };
 
   const scrollByDirection = (direction: "prev" | "next") => {
-    const lastIndex = t.amenities.items.length - 1;
+    const lastIndex = activeItems.length - 1;
     const targetIndex =
       direction === "prev"
         ? Math.max(activeIndex - 1, 0)
@@ -142,153 +154,189 @@ export default function Amenities() {
   return (
     <section id="amenities" className="py-28 px-6 lg:px-12 overflow-hidden" style={{ background: "var(--dark)" }}>
       <div className="max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
-          <span className="text-[0.92rem] tracking-[0.24em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
-            {t.amenities.tag}
-          </span>
-        </div>
+        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,21rem)_minmax(0,1fr)] lg:gap-8 xl:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
+          <div className="lg:pr-1">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
+              <span className="text-[0.92rem] tracking-[0.24em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
+                {t.amenities.tag}
+              </span>
+            </div>
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <h2 className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
-            {t.amenities.title1}{" "}
-            <br />
-            <span style={{ color: "var(--gold)" }}>{t.amenities.title2}</span>
-          </h2>
-        </div>
+            <div className="mb-12 lg:mb-14">
+              <h2 className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+                {t.amenities.title1}{" "}
+                <br />
+                <span style={{ color: "var(--gold)" }}>{t.amenities.title2}</span>
+              </h2>
+            </div>
 
-        <div className="services-slider relative">
-          <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 md:w-12" style={{ background: "linear-gradient(90deg, var(--dark), transparent)" }} />
-          <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 md:w-12" style={{ background: "linear-gradient(270deg, var(--dark), transparent)" }} />
-
-          <button
-            type="button"
-            aria-label="Onceki hizmet karti"
-            onClick={() => scrollByDirection("prev")}
-            className={`absolute left-2 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border transition-all duration-500 md:flex ${
-              canScrollLeft
-                ? "translate-x-0 opacity-100"
-                : "-translate-x-4 opacity-0 pointer-events-none"
-            }`}
-            style={{
-              borderColor: "var(--border-strong)",
-              background: "rgba(20, 16, 12, 0.48)",
-              color: "var(--cream)",
-              backdropFilter: "blur(14px)",
-              boxShadow: "0 14px 40px rgba(0,0,0,0.18)",
-            }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m14.5 5.5-6 6 6 6" />
-            </svg>
-          </button>
-
-          <button
-            type="button"
-            aria-label="Sonraki hizmet karti"
-            onClick={() => scrollByDirection("next")}
-            className={`absolute right-2 top-1/2 z-20 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border transition-all duration-500 md:flex ${
-              canScrollRight
-                ? "translate-x-0 opacity-100"
-                : "translate-x-4 opacity-0 pointer-events-none"
-            }`}
-            style={{
-              borderColor: "var(--border-strong)",
-              background: "rgba(20, 16, 12, 0.48)",
-              color: "var(--cream)",
-              backdropFilter: "blur(14px)",
-              boxShadow: "0 14px 40px rgba(0,0,0,0.18)",
-            }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m9.5 5.5 6 6-6 6" />
-            </svg>
-          </button>
-
-          <div
-            ref={trackRef}
-            className={`services-track flex gap-4 overflow-x-auto px-1 pb-5 md:gap-5 lg:px-0 ${isDragging ? "is-dragging" : ""}`}
-            onPointerDown={handlePointerDown}
-            onPointerMove={handlePointerMove}
-            onPointerUp={stopDragging}
-            onPointerCancel={stopDragging}
-            onPointerLeave={stopDragging}
-          >
-            {t.amenities.items.map((item, index) => (
-              <article
-                key={item.title}
-                data-service-card="true"
-                className="service-card group snap-start shrink-0 basis-[78vw] md:basis-[calc((100%-1.25rem)/2)] overflow-hidden rounded-[2rem]"
-                style={{ background: "var(--dark-mid)" }}
-              >
-                <div
-                  className="service-card-media relative aspect-[16/10] overflow-hidden"
-                  style={{ background: cardSurfaces[index % cardSurfaces.length] }}
+            <div className="space-y-4">
+              {t.amenities.categories.map((category, index) => (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => setActiveCategoryIndex(index)}
+                  className="w-full rounded-[2rem] border px-6 py-5 text-left transition-all duration-500"
+                  style={{
+                    borderColor:
+                      activeCategoryIndex === index
+                        ? "var(--gold)"
+                        : "var(--border-color)",
+                    background:
+                      activeCategoryIndex === index
+                        ? "var(--gold-tint)"
+                        : "transparent",
+                    boxShadow:
+                      activeCategoryIndex === index
+                        ? "0 18px 50px rgba(168,92,58,0.12)"
+                        : "none",
+                  }}
                 >
-                  <div
-                    className="absolute inset-0"
-                    style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.08) 100%)" }}
-                  />
-                  <div
-                    className="service-card-glow absolute -right-12 top-1/2 h-40 w-40 -translate-y-1/2 rounded-full blur-3xl"
-                    style={{ background: "rgba(255,255,255,0.18)" }}
-                  />
-                  <div
-                    className="absolute left-5 top-5 rounded-full px-4 py-2 text-[11px] tracking-[0.28em] uppercase"
-                    style={{
-                      background: "rgba(255,255,255,0.14)",
-                      border: "1px solid rgba(255,255,255,0.18)",
-                      color: "#fff",
-                      fontFamily: "var(--font-raleway)",
-                    }}
+                  <h3
+                    className="text-[1.8rem] md:text-[2.15rem] font-light italic tracking-[-0.03em]"
+                    style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}
                   >
-                    {String(index + 1).padStart(2, "0")}
-                  </div>
-                  <div
-                    className="absolute bottom-5 right-5 flex h-14 w-14 items-center justify-center rounded-full backdrop-blur-md"
-                    style={{
-                      background: "rgba(20, 16, 12, 0.2)",
-                      border: "1px solid rgba(255,255,255,0.18)",
-                      color: "#fff",
-                    }}
-                  >
-                    {icons[index]}
-                  </div>
-                  <div
-                    className="absolute -bottom-8 left-6 text-[5.5rem] font-light leading-none opacity-15 md:text-[6.5rem]"
-                    style={{ color: "#fff", fontFamily: "var(--font-cormorant)" }}
-                  >
-                    0{index + 1}
-                  </div>
-                </div>
-
-                <div className="p-7 md:p-8">
-                  <h3 className="mb-3 text-[1.9rem] md:text-[2.15rem] font-light italic tracking-[-0.03em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
-                    {item.title}
+                    {category.title}
                   </h3>
-                  <p className="max-w-[30rem]" style={{ color: "var(--cream)", opacity: 0.7, fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
-                    {item.description}
-                  </p>
-                </div>
-              </article>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="mt-3 flex items-center justify-center gap-2">
-            {t.amenities.items.map((item, index) => (
-              <button
-                key={item.title}
-                type="button"
-                aria-label={`${item.title} kartina git`}
-                onClick={() => scrollToCard(index)}
-                className={`rounded-full transition-all duration-500 ${activeIndex === index ? "w-10" : "w-2"}`}
-                style={{
-                  height: "0.35rem",
-                  background: activeIndex === index ? "var(--gold)" : "var(--border-strong)",
-                  opacity: activeIndex === index ? 1 : 0.8,
-                }}
-              />
-            ))}
+          <div className="services-slider relative w-full self-start lg:max-w-[38rem] lg:justify-self-center lg:pt-1">
+            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 md:w-10" style={{ background: "linear-gradient(90deg, var(--dark), transparent)" }} />
+            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 md:w-10" style={{ background: "linear-gradient(270deg, var(--dark), transparent)" }} />
+
+            <button
+              type="button"
+              aria-label="Onceki deneyim karti"
+              onClick={() => scrollByDirection("prev")}
+              className={`absolute left-1 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border transition-all duration-500 md:flex ${
+                canScrollLeft
+                  ? "translate-x-0 opacity-100"
+                  : "-translate-x-4 opacity-0 pointer-events-none"
+              }`}
+              style={{
+                borderColor: "var(--border-strong)",
+                background: "rgba(20, 16, 12, 0.48)",
+                color: "var(--cream)",
+                backdropFilter: "blur(14px)",
+                boxShadow: "0 14px 40px rgba(0,0,0,0.18)",
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m14.5 5.5-6 6 6 6" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              aria-label="Sonraki deneyim karti"
+              onClick={() => scrollByDirection("next")}
+              className={`absolute right-1 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border transition-all duration-500 md:flex ${
+                canScrollRight
+                  ? "translate-x-0 opacity-100"
+                  : "translate-x-4 opacity-0 pointer-events-none"
+              }`}
+              style={{
+                borderColor: "var(--border-strong)",
+                background: "rgba(20, 16, 12, 0.48)",
+                color: "var(--cream)",
+                backdropFilter: "blur(14px)",
+                boxShadow: "0 14px 40px rgba(0,0,0,0.18)",
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m9.5 5.5 6 6-6 6" />
+              </svg>
+            </button>
+
+            <div
+              ref={trackRef}
+              className={`services-track flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-5 pr-12 md:gap-4 md:pr-16 lg:px-0 lg:pr-18 ${isDragging ? "is-dragging" : ""}`}
+              onPointerDown={handlePointerDown}
+              onPointerMove={handlePointerMove}
+              onPointerUp={stopDragging}
+              onPointerCancel={stopDragging}
+              onPointerLeave={stopDragging}
+            >
+              {activeItems.map((item, index) => (
+                <article
+                  key={`${activeCategory.id}-${item.title}`}
+                  data-service-card="true"
+                  className="service-card group snap-start shrink-0 basis-[66vw] sm:basis-[21rem] md:basis-[22rem] lg:basis-[calc(100%-7.5rem)] xl:basis-[calc(100%-8rem)] overflow-hidden rounded-[2rem]"
+                  style={{ background: "var(--dark-mid)" }}
+                >
+                  <div
+                    className="service-card-media relative aspect-[16/10] overflow-hidden"
+                    style={{ background: cardSurfaces[index % cardSurfaces.length] }}
+                  >
+                    <div
+                      className="absolute inset-0"
+                      style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.08) 100%)" }}
+                    />
+                    <div
+                      className="service-card-glow absolute -right-12 top-1/2 h-36 w-36 -translate-y-1/2 rounded-full blur-3xl"
+                      style={{ background: "rgba(255,255,255,0.18)" }}
+                    />
+                    <div
+                      className="absolute left-4 top-4 rounded-full px-3.5 py-2 text-[10px] tracking-[0.24em] uppercase"
+                      style={{
+                        background: "rgba(255,255,255,0.14)",
+                        border: "1px solid rgba(255,255,255,0.18)",
+                        color: "#fff",
+                        fontFamily: "var(--font-raleway)",
+                      }}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </div>
+                    <div
+                      className="absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full backdrop-blur-md"
+                      style={{
+                        background: "rgba(20, 16, 12, 0.2)",
+                        border: "1px solid rgba(255,255,255,0.18)",
+                        color: "#fff",
+                      }}
+                    >
+                      {icons[index % icons.length]}
+                    </div>
+                    <div
+                      className="absolute -bottom-7 left-5 text-[4.6rem] font-light leading-none opacity-15 md:text-[5.2rem]"
+                      style={{ color: "#fff", fontFamily: "var(--font-cormorant)" }}
+                    >
+                      0{index + 1}
+                    </div>
+                  </div>
+
+                  <div className="p-6 md:p-7">
+                    <h3 className="mb-3 text-[1.7rem] md:text-[1.95rem] font-light italic tracking-[-0.03em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+                      {item.title}
+                    </h3>
+                    <p style={{ color: "var(--cream)", opacity: 0.72, fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
+                      {item.description}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+
+            <div className="mt-3 flex items-center justify-center gap-2">
+              {activeItems.map((item, index) => (
+                <button
+                  key={`${activeCategory.id}-${item.title}-dot`}
+                  type="button"
+                  aria-label={`${item.title} kartina git`}
+                  onClick={() => scrollToCard(index)}
+                  className={`rounded-full transition-all duration-500 ${activeIndex === index ? "w-10" : "w-2"}`}
+                  style={{
+                    height: "0.35rem",
+                    background: activeIndex === index ? "var(--gold)" : "var(--border-strong)",
+                    opacity: activeIndex === index ? 1 : 0.8,
+                  }}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>

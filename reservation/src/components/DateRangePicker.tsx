@@ -25,11 +25,11 @@ interface DateRangePickerProps {
   checkIn: string;
   checkOut: string;
   adults: number;
-  children: number;
+  childCount: number;
   onChange: (field: string, value: string | number) => void;
 }
 
-export default function DateRangePicker({ checkIn, checkOut, adults, children, onChange }: DateRangePickerProps) {
+export default function DateRangePicker({ checkIn, checkOut, adults, childCount, onChange }: DateRangePickerProps) {
   const { t, language } = useLanguage();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -253,7 +253,7 @@ export default function DateRangePicker({ checkIn, checkOut, adults, children, o
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         {[
           { label: t.datePicker.adults,   value: adults,   field: "adults",   min: 1, max: 6 },
-          { label: t.datePicker.children, value: children, field: "children", min: 0, max: 4 },
+          { label: t.datePicker.children, value: childCount, field: "children", min: 0, max: 4 },
         ].map(({ label, value, field, min, max }) => (
           <div key={field}>
             <label className="block text-[0.9rem] tracking-[0.18em] uppercase mb-3 opacity-70" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
