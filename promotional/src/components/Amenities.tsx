@@ -152,8 +152,8 @@ export default function Amenities() {
   };
 
   return (
-    <section id="amenities" className="py-28 px-6 lg:px-12 overflow-hidden" style={{ background: "var(--dark)" }}>
-      <div className="max-w-7xl mx-auto">
+    <section id="amenities" className="py-16 overflow-hidden" style={{ background: "var(--dark)" }}>
+      <div className="max-w-7xl mx-auto px-6 lg:px-12">
 
         {/* Section header */}
         <div className="flex items-center gap-4 mb-6">
@@ -199,11 +199,10 @@ export default function Amenities() {
           ))}
         </div>
 
-        {/* Full-width slider */}
-        <div className="services-slider relative w-full">
-            <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 md:w-10" style={{ background: "linear-gradient(90deg, var(--dark), transparent)" }} />
-            <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 md:w-10" style={{ background: "linear-gradient(270deg, var(--dark), transparent)" }} />
+      </div>
 
+      {/* Full-width slider — outside max-w container */}
+      <div className="services-slider relative w-full mt-8">
             <button
               type="button"
               aria-label="Onceki deneyim karti"
@@ -246,7 +245,7 @@ export default function Amenities() {
 
             <div
               ref={trackRef}
-              className={`services-track flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-5 pr-12 md:gap-4 md:pr-16 lg:px-0 lg:pr-18 ${isDragging ? "is-dragging" : ""}`}
+              className={`services-track flex snap-x snap-mandatory gap-4 overflow-x-auto pl-6 pr-6 pb-5 lg:pl-12 lg:pr-12 ${isDragging ? "is-dragging" : ""}`}
               onPointerDown={handlePointerDown}
               onPointerMove={handlePointerMove}
               onPointerUp={stopDragging}
@@ -258,7 +257,7 @@ export default function Amenities() {
                   key={`${activeCategory.id}-${item.title}`}
                   data-service-card="true"
                   className="service-card group snap-start shrink-0 basis-[80vw] sm:basis-[26rem] md:basis-[30rem] lg:basis-[38rem] overflow-hidden rounded-[2rem]"
-                  style={{ background: "var(--dark-mid)" }}
+                  style={{ background: "var(--dark)" }}
                 >
                   <div
                     className="service-card-media relative aspect-[16/10] overflow-hidden"
@@ -329,7 +328,6 @@ export default function Amenities() {
                 />
               ))}
             </div>
-        </div>
       </div>
     </section>
   );
