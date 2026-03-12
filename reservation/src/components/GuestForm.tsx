@@ -233,8 +233,8 @@ function BirthDatePicker({ value, min, max, placeholder, className, style, onCha
         <div
           className="absolute right-0 top-full z-20 mt-2 w-[19rem] overflow-hidden rounded-[1.6rem] border p-3 shadow-[0_20px_48px_rgba(0,0,0,0.24)] backdrop-blur-md"
           style={{
-            borderColor: "rgba(200, 126, 66, 0.28)",
-            background: "rgba(246, 241, 234, 0.985)",
+            borderColor: "var(--border-strong)",
+            background: "var(--dark)",
             animation: "genderDropdownIn 180ms ease-out",
           }}
         >
@@ -244,7 +244,7 @@ function BirthDatePicker({ value, min, max, placeholder, className, style, onCha
               onClick={() => setVisibleMonth((current) => clampMonth(new Date(current.getFullYear(), current.getMonth() - 1, 1)))}
               disabled={previousMonthDisabled}
               className="flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-35"
-              style={{ borderColor: "rgba(200, 126, 66, 0.26)", color: "#2B221C", background: "rgba(255,255,255,0.78)" }}
+              style={{ borderColor: "var(--border-color)", color: "var(--cream)", background: "var(--dark)" }}
             >
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-4 w-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m12.5 4.5-5 5 5 5" />
@@ -298,7 +298,7 @@ function BirthDatePicker({ value, min, max, placeholder, className, style, onCha
               onClick={() => setVisibleMonth((current) => clampMonth(new Date(current.getFullYear(), current.getMonth() + 1, 1)))}
               disabled={nextMonthDisabled}
               className="flex h-10 w-10 items-center justify-center rounded-full border transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-35"
-              style={{ borderColor: "rgba(200, 126, 66, 0.26)", color: "#2B221C", background: "rgba(255,255,255,0.78)" }}
+              style={{ borderColor: "var(--border-color)", color: "var(--cream)", background: "var(--dark)" }}
             >
               <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-4 w-4">
                 <path strokeLinecap="round" strokeLinejoin="round" d="m7.5 4.5 5 5-5 5" />
@@ -379,7 +379,7 @@ function GenderSelect({ value, placeholder, femaleLabel, maleLabel, className, s
       {isOpen && (
         <div
           className="absolute left-0 right-0 top-full z-20 mt-2 overflow-hidden rounded-[1.4rem] border p-2 shadow-[0_18px_45px_rgba(0,0,0,0.24)] backdrop-blur-md"
-          style={{ borderColor: "rgba(200, 126, 66, 0.3)", background: "rgba(246, 241, 234, 0.98)" }}
+          style={{ borderColor: "var(--border-strong)", background: "var(--dark)" }}
         >
           {options.map((option) => {
             const isSelected = option.value === value;
@@ -395,11 +395,11 @@ function GenderSelect({ value, placeholder, femaleLabel, maleLabel, className, s
                 className="flex w-full items-center justify-between rounded-full px-4 py-3 text-left text-[0.98rem] transition-colors duration-200"
                 style={{
                   fontFamily: "var(--font-raleway)",
-                  background: isSelected ? "rgba(200, 126, 66, 0.16)" : "transparent",
+                  background: isSelected ? "var(--gold-tint)" : "transparent",
                   animation: "genderDropdownIn 180ms ease-out",
                 }}
               >
-                <span style={{ color: "#2B221C", fontWeight: 500 }}>{option.label}</span>
+                <span style={{ color: "var(--cream)", fontWeight: 500 }}>{option.label}</span>
                 {isSelected && (
                   <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth={1.8} className="h-4 w-4" style={{ color: "var(--gold)" }}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 10.5 3.25 3.25 7.75-8" />
@@ -506,7 +506,7 @@ export default function GuestForm({
 
           <div className="space-y-5">
             {guestInfo.adults.map((adult, index) => (
-              <div key={`adult-${index}`} className="rounded-[1.7rem] border p-4 md:p-5" style={{ borderColor: "rgba(200, 126, 66, 0.2)" }}>
+              <div key={`adult-${index}`} className="rounded-[1.7rem] border p-4 md:p-5" style={{ borderColor: "var(--border-color)" }}>
                 <p className="mb-4 text-[0.9rem] tracking-[0.2em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
                   {t.guestForm.adultGuest} {index + 1}
                 </p>
@@ -559,7 +559,7 @@ export default function GuestForm({
             ))}
 
             {guestInfo.children.map((child, index) => (
-              <div key={`child-${index}`} className="rounded-[1.7rem] border p-4 md:p-5" style={{ borderColor: "rgba(200, 126, 66, 0.2)" }}>
+              <div key={`child-${index}`} className="rounded-[1.7rem] border p-4 md:p-5" style={{ borderColor: "var(--border-color)" }}>
                 <p className="mb-4 text-[0.9rem] tracking-[0.2em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)" }}>
                   {t.guestForm.childGuest} {index + 1}
                 </p>
@@ -614,7 +614,7 @@ export default function GuestForm({
           </div>
         </div>
 
-        <div className="flex gap-3 rounded-[1.75rem] border px-4 py-4 text-[1.02rem]" style={{ borderColor: "rgba(200, 126, 66, 0.34)", background: "var(--gold-tint)" }}>
+        <div className="flex gap-3 rounded-[1.75rem] border px-4 py-4 text-[1.02rem]" style={{ borderColor: "var(--border-strong)", background: "var(--gold-tint)" }}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-5 h-5 flex-shrink-0 mt-0.5" style={{ color: "var(--gold)" }}>
             <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
           </svg>
@@ -679,10 +679,10 @@ export default function GuestForm({
         .saros-birthdate-select {
           width: 100%;
           appearance: none;
-          border: 1px solid rgba(200, 126, 66, 0.28);
+          border: 1px solid var(--border-color);
           border-radius: 999px;
-          background: rgba(255, 255, 255, 0.78);
-          color: #2B221C;
+          background: var(--dark);
+          color: var(--cream);
           padding: 0.85rem 2.3rem 0.85rem 1rem;
           font-size: 0.94rem;
           letter-spacing: 0.02em;
@@ -715,7 +715,8 @@ export default function GuestForm({
           letter-spacing: 0.08em;
           text-transform: uppercase;
           padding: 0.3rem 0;
-          color: rgba(43, 34, 28, 0.62);
+          color: var(--cream);
+          opacity: 0.62;
           font-family: var(--font-raleway);
           font-weight: 600;
         }
@@ -738,7 +739,7 @@ export default function GuestForm({
           border: none;
           border-radius: 999px;
           background: transparent;
-          color: #2B221C;
+          color: var(--cream);
           font-family: var(--font-raleway);
           font-size: 0.96rem;
           font-variant-numeric: lining-nums tabular-nums;
@@ -747,7 +748,7 @@ export default function GuestForm({
         }
 
         .saros-birthdate-calendar .rdp-day_button:hover:not(:disabled) {
-          background: rgba(200, 126, 66, 0.14);
+          background: var(--gold-tint);
           color: var(--gold);
         }
 

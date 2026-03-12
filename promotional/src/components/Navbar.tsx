@@ -13,6 +13,7 @@ interface NavbarProps {
 
 export default function Navbar({ reservationUrl }: NavbarProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [roomsMenuOpen, setRoomsMenuOpen] = useState(false);
   const [mobileRoomsOpen, setMobileRoomsOpen] = useState(false);
@@ -23,13 +24,25 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
   const usesHeroStyleAtTop = pathname === "/" || isRoomDetailPage;
   const isElevated = scrolled || !usesHeroStyleAtTop;
   const roomsMenuRef = useRef<HTMLDivElement | null>(null);
-  const closeRoomsMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
-    null
-  );
+  const closeRoomsMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => {
+      const y = window.scrollY;
+      const prev = lastScrollYRef.current;
+      setScrolled(y > 60);
+      // Hide when scrolling down past threshold; show when scrolling up or near top
+      if (y <= 80) {
+        setHidden(false);
+      } else if (y > prev) {
+        setHidden(true);  // scrolling down → hide and stay hidden
+      } else {
+        setHidden(false); // scrolling up → show
+      }
+      lastScrollYRef.current = y;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -99,6 +112,7 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
         background: isElevated ? "var(--nav-bg)" : "transparent",
         backdropFilter: isElevated ? "blur(16px)" : "none",
         boxShadow: isElevated ? "0 1px 30px rgba(0,0,0,0.12)" : "none",
+        transform: hidden && !menuOpen ? "translateY(-100%)" : "translateY(0)",
       }}
     >
       <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-12">
@@ -316,9 +330,9 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
           menuOpen ? "max-h-80 pb-6" : "max-h-0"
         }`}
         style={{
-          background: "rgba(44, 33, 26, 0.9)",
+          background: "var(--nav-mobile-bg)",
           backdropFilter: "blur(20px)",
-          borderTop: "1px solid rgba(255,255,255,0.1)",
+          borderTop: "1px solid var(--border-color)",
         }}
       >
         <div className="flex flex-col items-center gap-6 pt-6">
@@ -328,7 +342,7 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
                 href="/odalar"
                 onClick={() => setMenuOpen(false)}
                 className="text-sm tracking-[0.15em] uppercase"
-                style={{ color: "#F5EFE7", fontFamily: "var(--font-raleway)" }}
+                style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
               >
                 {t.nav.rooms}
               </Link>
@@ -337,7 +351,7 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
                 onClick={() => setMobileRoomsOpen((prev) => !prev)}
                 className="text-sm"
                 aria-label="Odalar menusu"
-                style={{ color: "#F5EFE7", fontFamily: "var(--font-raleway)" }}
+                style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
               >
                 <span className={`block transition-transform duration-300 ${mobileRoomsOpen ? "rotate-180" : ""}`}>
                   ▾
@@ -371,8 +385,8 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
                     }}
                     className="border-t px-5 py-3 text-center"
                     style={{
-                      color: "#F5EFE7",
-                      borderColor: "rgba(255,255,255,0.08)",
+                      color: "var(--cream)",
+                      borderColor: "var(--border-color)",
                       fontFamily: "var(--font-raleway)",
                     }}
                   >
@@ -395,7 +409,7 @@ export default function Navbar({ reservationUrl }: NavbarProps) {
                 setMenuOpen(false);
               }}
               className="text-sm tracking-[0.15em] uppercase"
-              style={{ color: "#F5EFE7", fontFamily: "var(--font-raleway)" }}
+              style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
             >
               {link.label}
             </Link>

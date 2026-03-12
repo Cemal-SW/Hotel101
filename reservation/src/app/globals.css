@@ -18,7 +18,7 @@
   --nav-bg: rgba(247, 242, 236, 0.95);
 }
 
-/* ── Dark theme — override ─────────────────────────────────── */
+/* ── Dark theme ── */
 [data-theme="dark"] {
   --background: #2C211A;
   --foreground: #F5EFE7;

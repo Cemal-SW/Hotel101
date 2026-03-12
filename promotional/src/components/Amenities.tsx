@@ -1,17 +1,7 @@
 "use client";
 
-import type { PointerEvent as ReactPointerEvent } from "react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguage } from "./LanguageProvider";
-
-const icons = [
-  <svg key="breakfast" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8.25v-1.5m0 1.5c-1.355 0-2.697.056-4.024.166C6.845 8.51 6 9.473 6 10.608v2.513m6-4.871c1.355 0 2.697.056 4.024.166C17.155 8.51 18 9.473 18 10.608v2.513M15 21l-3-3m0 0-3 3m3-3v-6m-1.5-9.75H9.75a2.25 2.25 0 0 0-2.25 2.25v.75m7.5-3H14.25a2.25 2.25 0 0 0-2.25 2.25v.75m0 0h.008v.008H12v-.008Z" /></svg>,
-  <svg key="wifi" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M8.288 15.038a5.25 5.25 0 0 1 7.424 0M5.106 11.856c3.807-3.808 9.98-3.808 13.788 0M1.924 8.674c5.565-5.565 14.587-5.565 20.152 0M12.53 18.22l-.53.53-.53-.53a.75.75 0 0 1 1.06 0Z" /></svg>,
-  <svg key="transfer" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" /></svg>,
-  <svg key="concierge" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" /></svg>,
-  <svg key="spa" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>,
-  <svg key="multilingual" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-8 h-8"><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" /></svg>,
-];
 
 const cardSurfaces = [
   "radial-gradient(circle at 22% 18%, rgba(255,255,255,0.32), transparent 22%), linear-gradient(135deg, #a85c3a 0%, #e2b07a 46%, #f4e0c7 100%)",
@@ -22,155 +12,82 @@ const cardSurfaces = [
   "radial-gradient(circle at 74% 26%, rgba(255,255,255,0.24), transparent 18%), linear-gradient(135deg, #23323b 0%, #567480 48%, #d6e1e5 100%)",
 ];
 
+const AUTOPLAY_MS = 5000;
+
 export default function Amenities() {
   const { t } = useLanguage();
-  const trackRef = useRef<HTMLDivElement>(null);
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const dragStartXRef = useRef(0);
-  const dragStartScrollLeftRef = useRef(0);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [progress, setProgress] = useState(0);
+
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const startTimeRef = useRef(Date.now());
+
   const activeCategory = t.amenities.categories[activeCategoryIndex];
   const activeItems = activeCategory.items;
+  const count = activeItems.length;
+
+  const goTo = useCallback((index: number) => {
+    setActiveIndex(Math.max(0, Math.min(index, count - 1)));
+    setProgress(0);
+    startTimeRef.current = Date.now();
+  }, [count]);
+
+  const goPrev = useCallback(() => {
+    setActiveIndex((prev) => (prev === 0 ? count - 1 : prev - 1));
+    setProgress(0);
+    startTimeRef.current = Date.now();
+  }, [count]);
+
+  const goNext = useCallback(() => {
+    setActiveIndex((prev) => (prev + 1) % count);
+    setProgress(0);
+    startTimeRef.current = Date.now();
+  }, [count]);
 
   useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    let frameId = 0;
-
-    const updateTrackState = () => {
-      const cards = Array.from(
-        track.querySelectorAll<HTMLElement>("[data-service-card='true']")
-      );
-
-      if (!cards.length) return;
-
-      const viewportCenter = track.scrollLeft + track.clientWidth / 2;
-      let closestIndex = 0;
-      let closestDistance = Number.POSITIVE_INFINITY;
-
-      cards.forEach((card, index) => {
-        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-        const distance = Math.abs(cardCenter - viewportCenter);
-
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = index;
-        }
-      });
-
-      setActiveIndex((current) =>
-        current === closestIndex ? current : closestIndex
-      );
-
-      const maxScrollLeft = Math.max(track.scrollWidth - track.clientWidth, 0);
-      const threshold = 12;
-      setCanScrollLeft(track.scrollLeft > threshold);
-      setCanScrollRight(track.scrollLeft < maxScrollLeft - threshold);
-    };
-
-    const requestUpdate = () => {
-      cancelAnimationFrame(frameId);
-      frameId = requestAnimationFrame(updateTrackState);
-    };
-
-    requestUpdate();
-    track.addEventListener("scroll", requestUpdate, { passive: true });
-    window.addEventListener("resize", requestUpdate);
-
-    return () => {
-      cancelAnimationFrame(frameId);
-      track.removeEventListener("scroll", requestUpdate);
-      window.removeEventListener("resize", requestUpdate);
-    };
-  }, [activeItems]);
-
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    track.scrollTo({ left: 0, behavior: "auto" });
     setActiveIndex(0);
-    setCanScrollLeft(false);
+    setProgress(0);
+    startTimeRef.current = Date.now();
   }, [activeCategoryIndex]);
 
-  const scrollToCard = (index: number) => {
-    const track = trackRef.current;
-    const cards = track?.querySelectorAll<HTMLElement>("[data-service-card='true']");
-    const card = cards?.[index];
+  useEffect(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (!isPlaying) { setProgress(0); return; }
 
-    if (!track || !card) return;
+    startTimeRef.current = Date.now();
+    timerRef.current = setInterval(() => {
+      const p = Math.min((Date.now() - startTimeRef.current) / AUTOPLAY_MS, 1);
+      setProgress(p);
+    }, 50);
 
-    track.scrollTo({
-      left: Math.max(card.offsetLeft - 4, 0),
-      behavior: "smooth",
-    });
-  };
-
-  const scrollByDirection = (direction: "prev" | "next") => {
-    const lastIndex = activeItems.length - 1;
-    const targetIndex =
-      direction === "prev"
-        ? Math.max(activeIndex - 1, 0)
-        : Math.min(activeIndex + 1, lastIndex);
-
-    scrollToCard(targetIndex);
-  };
-
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== "mouse") return;
-
-    const track = trackRef.current;
-    if (!track) return;
-
-    dragStartXRef.current = event.clientX;
-    dragStartScrollLeftRef.current = track.scrollLeft;
-    setIsDragging(true);
-    track.setPointerCapture(event.pointerId);
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!isDragging) return;
-
-    const track = trackRef.current;
-    if (!track) return;
-
-    const deltaX = event.clientX - dragStartXRef.current;
-    track.scrollLeft = dragStartScrollLeftRef.current - deltaX;
-  };
-
-  const stopDragging = (event?: ReactPointerEvent<HTMLDivElement>) => {
-    const track = trackRef.current;
-    if (event && track?.hasPointerCapture(event.pointerId)) {
-      track.releasePointerCapture(event.pointerId);
-    }
-
-    setIsDragging(false);
-  };
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [isPlaying, activeIndex]);
 
   return (
     <section id="amenities" className="py-16 overflow-hidden" style={{ background: "var(--dark)" }}>
       <div className="max-w-7xl mx-auto px-6 lg:px-12">
-
-        {/* Section header */}
         <div className="flex items-center gap-4 mb-6">
           <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
-          <span className="text-[0.92rem] tracking-[0.24em] uppercase" style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}>
+          <span
+            className="text-[0.92rem] tracking-[0.24em] uppercase"
+            style={{ color: "var(--gold)", fontFamily: "var(--font-raleway)", fontWeight: 500 }}
+          >
             {t.amenities.tag}
           </span>
         </div>
 
         <div className="mb-10">
-          <h2 className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
+          <h2
+            className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]"
+            style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}
+          >
             {t.amenities.title1}{" "}
             <span style={{ color: "var(--gold)" }}>{t.amenities.title2}</span>
           </h2>
         </div>
 
-        {/* Horizontal category tabs */}
         <div className="flex items-end gap-0 mb-10 border-b" style={{ borderColor: "var(--border-color)" }}>
           {t.amenities.categories.map((category, index) => (
             <button
@@ -179,9 +96,7 @@ export default function Amenities() {
               onClick={() => setActiveCategoryIndex(index)}
               className="relative px-6 py-4 text-left transition-all duration-300"
               style={{
-                borderBottom: activeCategoryIndex === index
-                  ? "2px solid var(--gold)"
-                  : "2px solid transparent",
+                borderBottom: activeCategoryIndex === index ? "2px solid var(--gold)" : "2px solid transparent",
                 marginBottom: "-1px",
               }}
             >
@@ -198,136 +113,145 @@ export default function Amenities() {
             </button>
           ))}
         </div>
-
       </div>
 
-      {/* Full-width slider — outside max-w container */}
-      <div className="services-slider relative w-full mt-8">
-            <button
-              type="button"
-              aria-label="Onceki deneyim karti"
-              onClick={() => scrollByDirection("prev")}
-              className={`absolute left-1 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border transition-all duration-500 md:flex ${
-                canScrollLeft
-                  ? "translate-x-0 opacity-100"
-                  : "-translate-x-4 opacity-0 pointer-events-none"
-              }`}
-              style={{
-                borderColor: "var(--border-strong)",
-                background: "var(--dark-mid)",
-                color: "var(--cream)",
-              }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m14.5 5.5-6 6 6 6" />
-              </svg>
-            </button>
+      {/* Gallery with left/right buttons overlapping the card */}
+      <div className="relative w-full px-4 sm:px-6 lg:px-10">
+        <div className="relative" style={{ height: "clamp(480px, 82vh, 900px)" }}>
+          {/* Left button — white circle, black arrow, overlaps card left edge */}
+          <button
+            type="button"
+            aria-label="Önceki"
+            onClick={goPrev}
+            className="absolute left-6 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full shadow-md transition-all duration-200 hover:opacity-90 md:left-8 md:h-14 md:w-14"
+            style={{
+              background: "#fff",
+              color: "#0d0d0d",
+            }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5 md:h-6 md:w-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m14.5 5.5-6 6 6 6" />
+            </svg>
+          </button>
 
-            <button
-              type="button"
-              aria-label="Sonraki deneyim karti"
-              onClick={() => scrollByDirection("next")}
-              className={`absolute right-1 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border transition-all duration-500 md:flex ${
-                canScrollRight
-                  ? "translate-x-0 opacity-100"
-                  : "translate-x-4 opacity-0 pointer-events-none"
-              }`}
-              style={{
-                borderColor: "var(--border-strong)",
-                background: "var(--dark-mid)",
-                color: "var(--cream)",
-              }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.7} className="h-5 w-5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="m9.5 5.5 6 6-6 6" />
-              </svg>
-            </button>
+          {/* Right button — white circle, black arrow, overlaps card right edge */}
+          <button
+            type="button"
+            aria-label="Sonraki"
+            onClick={goNext}
+            className="absolute right-6 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full shadow-md transition-all duration-200 hover:opacity-90 md:right-8 md:h-14 md:w-14"
+            style={{
+              background: "#fff",
+              color: "#0d0d0d",
+            }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5 md:h-6 md:w-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="m9.5 5.5 6 6-6 6" />
+            </svg>
+          </button>
 
-            <div
-              ref={trackRef}
-              className={`services-track flex snap-x snap-mandatory gap-4 overflow-x-auto pl-6 pr-6 pb-5 lg:pl-12 lg:pr-12 ${isDragging ? "is-dragging" : ""}`}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={stopDragging}
-              onPointerCancel={stopDragging}
-              onPointerLeave={stopDragging}
-            >
-              {activeItems.map((item, index) => (
-                <article
-                  key={`${activeCategory.id}-${item.title}`}
-                  data-service-card="true"
-                  className="service-card group snap-start shrink-0 basis-[80vw] sm:basis-[26rem] md:basis-[30rem] lg:basis-[38rem] overflow-hidden rounded-[2rem]"
-                  style={{ background: "var(--dark)" }}
-                >
-                  <div
-                    className="service-card-media relative aspect-[16/10] overflow-hidden"
-                    style={{ background: cardSurfaces[index % cardSurfaces.length] }}
-                  >
-                    <div
-                      className="absolute inset-0"
-                      style={{ background: "linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.08) 100%)" }}
-                    />
-                    <div
-                      className="service-card-glow absolute -right-12 top-1/2 h-36 w-36 -translate-y-1/2 rounded-full blur-3xl"
-                      style={{ background: "rgba(255,255,255,0.18)" }}
-                    />
-                    <div
-                      className="absolute left-4 top-4 rounded-full px-3.5 py-2 text-[10px] tracking-[0.24em] uppercase"
-                      style={{
-                        background: "rgba(255,255,255,0.14)",
-                        border: "1px solid rgba(255,255,255,0.18)",
-                        color: "#fff",
-                        fontFamily: "var(--font-raleway)",
-                      }}
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </div>
-                    <div
-                      className="absolute bottom-4 right-4 flex h-12 w-12 items-center justify-center rounded-full"
-                      style={{
-                        background: "rgba(20, 16, 12, 0.35)",
-                        border: "1px solid rgba(255,255,255,0.18)",
-                        color: "#fff",
-                      }}
-                    >
-                      {icons[index % icons.length]}
-                    </div>
-                    <div
-                      className="absolute -bottom-7 left-5 text-[4.6rem] font-light leading-none opacity-15 md:text-[5.2rem]"
-                      style={{ color: "#fff", fontFamily: "var(--font-cormorant)" }}
-                    >
-                      0{index + 1}
-                    </div>
-                  </div>
-
-                  <div className="p-6 md:p-7">
-                    <h3 className="mb-3 text-[1.7rem] md:text-[1.95rem] font-light italic tracking-[-0.03em]" style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}>
-                      {item.title}
-                    </h3>
-                    <p style={{ color: "var(--cream)", opacity: 0.72, fontFamily: "var(--font-raleway)", fontWeight: 300 }}>
-                      {item.description}
-                    </p>
-                  </div>
-                </article>
-              ))}
-            </div>
-
-            <div className="mt-3 flex items-center justify-center gap-2">
-              {activeItems.map((item, index) => (
-                <button
-                  key={`${activeCategory.id}-${item.title}-dot`}
-                  type="button"
-                  aria-label={`${item.title} kartina git`}
-                  onClick={() => scrollToCard(index)}
-                  className={`rounded-full transition-all duration-500 ${activeIndex === index ? "w-10" : "w-2"}`}
+          {/* Cards: single visible card, crossfade (no sliding) */}
+          <div className="mx-14 h-full md:mx-16">
+            {activeItems.map((item, index) => (
+              <div
+                key={`${activeCategory.id}-${item.title}`}
+                className="absolute inset-0 overflow-hidden rounded-[1.5rem] transition-opacity duration-300"
+                style={{
+                  opacity: activeIndex === index ? 1 : 0,
+                  pointerEvents: activeIndex === index ? "auto" : "none",
+                }}
+              >
+                <div className="absolute inset-0" style={{ background: cardSurfaces[index % cardSurfaces.length] }} />
+                {/* Gradient overlay with soft left/right fade so buttons sit in a carved, soft-edged area */}
+                <div
+                  className="absolute inset-0"
                   style={{
-                    height: "0.35rem",
-                    background: activeIndex === index ? "var(--gold)" : "var(--border-strong)",
-                    opacity: activeIndex === index ? 1 : 0.8,
+                    background: "linear-gradient(180deg, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.35) 100%)",
+                    maskImage: "linear-gradient(90deg, transparent 0, black 100px, black calc(100% - 100px), transparent 100%)",
+                    WebkitMaskImage: "linear-gradient(90deg, transparent 0, black 100px, black calc(100% - 100px), transparent 100%)",
+                    maskSize: "100% 100%",
+                    WebkitMaskSize: "100% 100%",
+                    maskRepeat: "no-repeat",
+                    WebkitMaskRepeat: "no-repeat",
                   }}
                 />
-              ))}
-            </div>
+
+                <div
+                  className="absolute top-4 left-5 sm:top-6 sm:left-7 text-[4rem] sm:text-[5.5rem] font-light leading-none select-none pointer-events-none"
+                  style={{ color: "rgba(255,255,255,0.10)", fontFamily: "var(--font-cormorant)" }}
+                >
+                  {String(index + 1).padStart(2, "0")}
+                </div>
+
+                <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-8 lg:p-10 pointer-events-none">
+                  <h3
+                    className="text-[1.4rem] sm:text-[1.9rem] lg:text-[2.4rem] font-light italic leading-[1.1] tracking-[-0.03em] mb-2 max-w-xl"
+                    style={{ color: "#fff", fontFamily: "var(--font-cormorant)", textShadow: "0 2px 16px rgba(0,0,0,0.45)" }}
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    className="text-[0.85rem] sm:text-[0.95rem] leading-relaxed max-w-lg"
+                    style={{ color: "rgba(255,255,255,0.78)", fontFamily: "var(--font-raleway)", fontWeight: 300, textShadow: "0 1px 10px rgba(0,0,0,0.3)" }}
+                  >
+                    {item.description}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Controls — unchanged */}
+      <div className="flex items-center justify-center gap-3 mt-6">
+        <div
+          className="flex items-center gap-1.5 rounded-full px-3 py-2"
+          style={{ background: "var(--dark)", border: "1px solid var(--border-color)" }}
+        >
+          {activeItems.map((item, index) => (
+            <button
+              key={`${activeCategory.id}-${item.title}-dot`}
+              type="button"
+              aria-label={item.title}
+              onClick={() => goTo(index)}
+              className="relative rounded-full overflow-hidden transition-all duration-500"
+              style={{
+                width: activeIndex === index ? "2.5rem" : "0.5rem",
+                height: "0.5rem",
+                background: activeIndex === index ? "var(--border-strong)" : "var(--border-color)",
+              }}
+            >
+              {activeIndex === index && isPlaying && (
+                <div
+                  className="absolute inset-y-0 left-0 rounded-full"
+                  style={{ width: `${progress * 100}%`, background: "var(--gold)", transition: "width 50ms linear" }}
+                />
+              )}
+              {activeIndex === index && !isPlaying && (
+                <div className="absolute inset-0 rounded-full" style={{ background: "var(--gold)" }} />
+              )}
+            </button>
+          ))}
+        </div>
+
+        <button
+          type="button"
+          aria-label={isPlaying ? "Duraklat" : "Oynat"}
+          onClick={() => setIsPlaying((p) => !p)}
+          className="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200"
+          style={{ background: "var(--dark)", border: "1px solid var(--border-color)", color: "var(--cream)" }}
+        >
+          {isPlaying ? (
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+              <path d="M8 5h2.5v14H8zm5.5 0H16v14h-2.5z" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
+              <path d="M8 5.14v13.72a.5.5 0 0 0 .76.43l10.94-6.86a.5.5 0 0 0 0-.86L8.76 4.71a.5.5 0 0 0-.76.43z" />
+            </svg>
+          )}
+        </button>
       </div>
     </section>
   );

@@ -64,11 +64,10 @@ export default function RoomCard({
           <div
             className="absolute bottom-3 left-3 rounded-full px-4 py-2 text-[0.78rem] uppercase tracking-[0.16em]"
             style={{
-              background: "rgba(20, 16, 12, 0.58)",
-              border: "1px solid rgba(255,255,255,0.16)",
+              background: "var(--gold)",
+              border: "none",
               color: "#fff",
               fontFamily: "var(--font-raleway)",
-              backdropFilter: "blur(12px)",
             }}
           >
             {room.recommendationTag}
@@ -101,19 +100,19 @@ export default function RoomCard({
         <div className="flex flex-wrap gap-2 mb-5">
           <span
             className="rounded-full text-[0.86rem] px-3 py-1.5 border"
-            style={{ borderColor: "rgba(200, 126, 66, 0.28)", color: "var(--gold)", fontFamily: "var(--font-raleway)" }}
+            style={{ borderColor: "var(--border-strong)", color: "var(--gold)", fontFamily: "var(--font-raleway)" }}
           >
             {capacityLabel}: {room.capacity}
           </span>
           <span
             className="rounded-full text-[0.86rem] px-3 py-1.5 border"
-            style={{ borderColor: "rgba(200, 126, 66, 0.18)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
+            style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
           >
             {bedConfigurationLabel}: {room.bedConfiguration}
           </span>
           <span
             className="rounded-full text-[0.86rem] px-3 py-1.5 border"
-            style={{ borderColor: "rgba(200, 126, 66, 0.18)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
+            style={{ borderColor: "var(--border-color)", color: "var(--cream)", fontFamily: "var(--font-raleway)" }}
           >
             {room.roomCount} {roomCountLabel}
           </span>
@@ -127,7 +126,7 @@ export default function RoomCard({
         {(room.adultSupplementPerNight > 0 || room.childSupplementPerNight > 0) && (
           <div
             className="mb-5 rounded-[1.4rem] border px-4 py-3"
-            style={{ borderColor: "rgba(200, 126, 66, 0.2)", background: "rgba(200, 126, 66, 0.06)" }}
+            style={{ borderColor: "var(--border-color)", background: "var(--gold-tint)" }}
           >
             {room.adultSupplementPerNight > 0 ? (
               <p className="text-[0.92rem] opacity-70" style={{ color: "var(--cream)", fontFamily: "var(--font-raleway)", fontVariantNumeric: "lining-nums tabular-nums" }}>
