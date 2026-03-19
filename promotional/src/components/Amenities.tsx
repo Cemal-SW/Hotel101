@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useLanguage } from "./LanguageProvider";
 
 const cardSurfaces = [
@@ -12,17 +12,10 @@ const cardSurfaces = [
   "radial-gradient(circle at 74% 26%, rgba(255,255,255,0.24), transparent 18%), linear-gradient(135deg, #23323b 0%, #567480 48%, #d6e1e5 100%)",
 ];
 
-const AUTOPLAY_MS = 5000;
-
 export default function Amenities() {
   const { t } = useLanguage();
   const [activeCategoryIndex, setActiveCategoryIndex] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [progress, setProgress] = useState(0);
-
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const startTimeRef = useRef(Date.now());
 
   const activeCategory = t.amenities.categories[activeCategoryIndex];
   const activeItems = activeCategory.items;
@@ -30,45 +23,24 @@ export default function Amenities() {
 
   const goTo = useCallback((index: number) => {
     setActiveIndex(Math.max(0, Math.min(index, count - 1)));
-    setProgress(0);
-    startTimeRef.current = Date.now();
   }, [count]);
 
   const goPrev = useCallback(() => {
     setActiveIndex((prev) => (prev === 0 ? count - 1 : prev - 1));
-    setProgress(0);
-    startTimeRef.current = Date.now();
   }, [count]);
 
   const goNext = useCallback(() => {
     setActiveIndex((prev) => (prev + 1) % count);
-    setProgress(0);
-    startTimeRef.current = Date.now();
   }, [count]);
 
   useEffect(() => {
     setActiveIndex(0);
-    setProgress(0);
-    startTimeRef.current = Date.now();
   }, [activeCategoryIndex]);
 
-  useEffect(() => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    if (!isPlaying) { setProgress(0); return; }
-
-    startTimeRef.current = Date.now();
-    timerRef.current = setInterval(() => {
-      const p = Math.min((Date.now() - startTimeRef.current) / AUTOPLAY_MS, 1);
-      setProgress(p);
-    }, 50);
-
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [isPlaying, activeIndex]);
-
   return (
-    <section id="amenities" className="py-16 overflow-hidden" style={{ background: "var(--dark)" }}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
-        <div className="flex items-center gap-4 mb-6">
+    <section id="amenities" className="py-24 md:py-28 px-6 lg:px-12 overflow-hidden" style={{ background: "var(--dark)" }}>
+      <div className="max-w-7xl mx-auto">
+        <div className="flex items-center gap-4 mb-6 md:mb-8">
           <div className="w-12 h-px" style={{ background: "var(--gold)" }} />
           <span
             className="text-[0.92rem] tracking-[0.24em] uppercase"
@@ -78,7 +50,7 @@ export default function Amenities() {
           </span>
         </div>
 
-        <div className="mb-10">
+        <div className="mb-6 md:mb-8">
           <h2
             className="text-[3.55rem] md:text-[4.7rem] font-light italic leading-[0.92] tracking-[-0.04em]"
             style={{ color: "var(--cream)", fontFamily: "var(--font-cormorant)" }}
@@ -88,48 +60,55 @@ export default function Amenities() {
           </h2>
         </div>
 
-        <div className="flex items-end gap-0 mb-10 border-b" style={{ borderColor: "var(--border-color)" }}>
-          {t.amenities.categories.map((category, index) => (
-            <button
-              key={category.id}
-              type="button"
-              onClick={() => setActiveCategoryIndex(index)}
-              className="relative px-6 py-4 text-left transition-all duration-300"
-              style={{
-                borderBottom: activeCategoryIndex === index ? "2px solid var(--gold)" : "2px solid transparent",
-                marginBottom: "-1px",
-              }}
-            >
-              <span
-                className="text-[1.55rem] md:text-[1.85rem] font-light italic tracking-[-0.03em] transition-colors duration-300"
+        {/* Buttons + gallery — blok sayfa ortasında */}
+        <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 lg:gap-10 w-full">
+          {/* Sol: kategori butonları */}
+          <div className="flex flex-col gap-3 pt-1 md:pt-0 w-full max-w-[18rem] shrink-0">
+            {t.amenities.categories.map((category, index) => (
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => setActiveCategoryIndex(index)}
+                className={`amenities-category-btn group w-full rounded-[1.5rem] border px-6 py-4 text-left
+                  motion-safe:transition-[transform,box-shadow,border-color,background-color] motion-safe:duration-400 motion-safe:ease-[cubic-bezier(0.22,1,0.36,1)]
+                  hover:-translate-y-0.5 hover:scale-[1.02] hover:shadow-[0_12px_40px_rgba(0,0,0,0.08)]
+                  active:translate-y-0 active:scale-[0.99]
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--gold)]/45 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--dark)]
+                  motion-reduce:hover:translate-y-0 motion-reduce:hover:scale-100 motion-reduce:hover:shadow-none
+                  ${activeCategoryIndex === index ? "shadow-[0_8px_36px_rgba(0,0,0,0.06)] ring-1 ring-[var(--gold)]/35" : ""}`}
                 style={{
-                  color: activeCategoryIndex === index ? "var(--gold)" : "var(--cream)",
-                  opacity: activeCategoryIndex === index ? 1 : 0.45,
-                  fontFamily: "var(--font-cormorant)",
+                  borderColor: activeCategoryIndex === index ? "var(--gold)" : "var(--border-color)",
+                  background: activeCategoryIndex === index ? "var(--gold-tint)" : "transparent",
+                  animationDelay: `${index * 95}ms`,
                 }}
               >
-                {category.title}
-              </span>
-            </button>
-          ))}
-        </div>
-      </div>
+                <span
+                  className="text-[1.45rem] md:text-[1.7rem] font-light italic tracking-[-0.03em] motion-safe:transition-[color,opacity,transform] motion-safe:duration-400 group-hover:translate-x-0.5"
+                  style={{
+                    color: activeCategoryIndex === index ? "var(--gold)" : "var(--cream)",
+                    opacity: activeCategoryIndex === index ? 1 : 0.6,
+                    fontFamily: "var(--font-cormorant)",
+                  }}
+                >
+                  {category.title}
+                </span>
+              </button>
+            ))}
+          </div>
 
-      {/* Gallery with left/right buttons overlapping the card */}
-      <div className="relative w-full px-4 sm:px-6 lg:px-10">
-        <div className="relative" style={{ height: "clamp(480px, 82vh, 900px)" }}>
+          {/* Sağ: galeri + dots */}
+          <div className="relative w-full max-w-[min(100%,40rem)] md:max-w-[min(100%,44rem)] flex flex-col shrink-0 min-w-0">
+          {/* 3:2 slot — sources 1500×1000 etc. + object-cover */}
+          <div className="relative w-full aspect-[3/2]">
           {/* Left button — white circle, black arrow, overlaps card left edge */}
           <button
             type="button"
             aria-label="Önceki"
             onClick={goPrev}
-            className="absolute left-6 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full shadow-md transition-all duration-200 hover:opacity-90 md:left-8 md:h-14 md:w-14"
-            style={{
-              background: "#fff",
-              color: "#0d0d0d",
-            }}
+            className="absolute left-6 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-white/40 shadow-md backdrop-blur-md transition-all duration-200 hover:bg-white/55 md:left-8 md:h-11 md:w-11"
+            style={{ color: "#0d0d0d" }}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5 md:h-6 md:w-6">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4 md:h-5 md:w-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="m14.5 5.5-6 6 6 6" />
             </svg>
           </button>
@@ -139,19 +118,16 @@ export default function Amenities() {
             type="button"
             aria-label="Sonraki"
             onClick={goNext}
-            className="absolute right-6 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full shadow-md transition-all duration-200 hover:opacity-90 md:right-8 md:h-14 md:w-14"
-            style={{
-              background: "#fff",
-              color: "#0d0d0d",
-            }}
+            className="absolute right-6 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/50 bg-white/40 shadow-md backdrop-blur-md transition-all duration-200 hover:bg-white/55 md:right-8 md:h-11 md:w-11"
+            style={{ color: "#0d0d0d" }}
           >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-5 w-5 md:h-6 md:w-6">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="h-4 w-4 md:h-5 md:w-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="m9.5 5.5 6 6-6 6" />
             </svg>
           </button>
 
           {/* Cards: single visible card, crossfade (no sliding) */}
-          <div className="mx-14 h-full md:mx-16">
+          <div className="mx-11 h-full sm:mx-12 md:mx-14">
             {activeItems.map((item, index) => (
               <div
                 key={`${activeCategory.id}-${item.title}`}
@@ -201,57 +177,31 @@ export default function Amenities() {
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Controls — unchanged */}
-      <div className="flex items-center justify-center gap-3 mt-6">
-        <div
-          className="flex items-center gap-1.5 rounded-full px-3 py-2"
-          style={{ background: "var(--dark)", border: "1px solid var(--border-color)" }}
-        >
-          {activeItems.map((item, index) => (
-            <button
-              key={`${activeCategory.id}-${item.title}-dot`}
-              type="button"
-              aria-label={item.title}
-              onClick={() => goTo(index)}
-              className="relative rounded-full overflow-hidden transition-all duration-500"
-              style={{
-                width: activeIndex === index ? "2.5rem" : "0.5rem",
-                height: "0.5rem",
-                background: activeIndex === index ? "var(--border-strong)" : "var(--border-color)",
-              }}
-            >
-              {activeIndex === index && isPlaying && (
-                <div
-                  className="absolute inset-y-0 left-0 rounded-full"
-                  style={{ width: `${progress * 100}%`, background: "var(--gold)", transition: "width 50ms linear" }}
-                />
-              )}
-              {activeIndex === index && !isPlaying && (
-                <div className="absolute inset-0 rounded-full" style={{ background: "var(--gold)" }} />
-              )}
-            </button>
-          ))}
+        {/* Dots — under gallery, same width as block above */}
+        <div className="flex items-center justify-center mt-4 shrink-0 w-full">
+          <div
+            className="flex items-center gap-1.5 rounded-full px-3 py-2"
+            style={{ background: "var(--dark)", border: "1px solid var(--border-color)" }}
+          >
+            {activeItems.map((item, index) => (
+              <button
+                key={`${activeCategory.id}-${item.title}-dot`}
+                type="button"
+                aria-label={item.title}
+                onClick={() => goTo(index)}
+                className="rounded-full transition-all duration-300"
+                style={{
+                  width: activeIndex === index ? "2rem" : "0.5rem",
+                  height: "0.5rem",
+                  background: activeIndex === index ? "var(--gold)" : "var(--border-color)",
+                }}
+              />
+            ))}
+          </div>
         </div>
-
-        <button
-          type="button"
-          aria-label={isPlaying ? "Duraklat" : "Oynat"}
-          onClick={() => setIsPlaying((p) => !p)}
-          className="flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200"
-          style={{ background: "var(--dark)", border: "1px solid var(--border-color)", color: "var(--cream)" }}
-        >
-          {isPlaying ? (
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-              <path d="M8 5h2.5v14H8zm5.5 0H16v14h-2.5z" />
-            </svg>
-          ) : (
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-              <path d="M8 5.14v13.72a.5.5 0 0 0 .76.43l10.94-6.86a.5.5 0 0 0 0-.86L8.76 4.71a.5.5 0 0 0-.76.43z" />
-            </svg>
-          )}
-        </button>
+        </div>
+        </div>
       </div>
     </section>
   );

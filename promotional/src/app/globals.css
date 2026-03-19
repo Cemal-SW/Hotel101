@@ -183,3 +183,27 @@ select {
     box-shadow: 0 18px 60px rgba(0, 0, 0, 0.14);
   }
 }
+
+/* Amenities — category buttons */
+@keyframes amenities-category-in {
+  from {
+    opacity: 0;
+    transform: translate3d(-16px, 10px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.amenities-category-btn {
+  animation: amenities-category-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .amenities-category-btn {
+    animation: none;
+    will-change: auto;
+  }
+}
